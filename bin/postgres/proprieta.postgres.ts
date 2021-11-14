@@ -267,6 +267,7 @@ export class PostgresProprieta extends MetadataProprieta implements IPostgresPro
             }
         }
     }
+    
 }
 
 

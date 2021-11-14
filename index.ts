@@ -6,14 +6,11 @@ import { Client } from "pg";
 import "reflect-metadata";
 import { decoratoreClasse } from "./bin/decoratori/classe.decoratore";
 import { decoratoreMetodo } from "./bin/decoratori/metodo.decoratore";
-import { decoratoreParametro } from "./bin/decoratori/parametro.decoratore";
 import { decoratoreProprieta } from "./bin/decoratori/proprieta,decoratore";
 import { ListaExpressClasse } from "./bin/express/classe.express";
-import { IParametriEstratti } from "./bin/express/utility/utility";
 import { Main } from "./bin/main/main";
 import { GetListaClasseMeta } from "./bin/metadata";
 import { ListaMetadataClasse } from "./bin/metadata/classe.metadata";
-import { ListaMetadataParametro } from "./bin/metadata/parametro.metadata";
 
 
 /* const Saluto:{
@@ -26,7 +23,7 @@ import { ListaMetadataParametro } from "./bin/metadata/parametro.metadata";
      }
 } */
 
-
+/* 
 @decoratoreClasse({
     itemMetaClasse: {
         nomeVariante: 'a'
@@ -158,8 +155,55 @@ export class Persona {
     SalutoDefinitoConParametriNelDcoratoreMetodoValidato(nome: string) {
         return '-Ciao : SalutoDefinitoConParametriNelDcoratoreMetodo con parametri: ' + nome + '   -; Sono fiscalmente: ' + this.nomeFiscale + '-;';
     }
-}
+} */
 
+
+@decoratoreClasse({
+    itemMetaClasse: {
+        nomeVariante: 'a'
+    },
+    itemExpressClasse: {
+        nomeVariante: 'b'
+    },
+    itemPostgresClasse: {
+        nomeVariante: 'b',
+        abilitaCreatedAt: true,
+        abilitaUpdatedAt: true,
+        abilitaDeletedAt: true,
+        creaId: true,
+        nomeTabella: 'b'
+    }
+})
+export class Persona {
+
+    @decoratoreProprieta({
+        itemMetaProprieta: { tipo: 'varchar(n)', nome: 'nomeFiscale' },
+        itemPostgresProprieta: {
+            nome: 'nomeFiscale', tipo: 'varchar(n)', sommario: '', descrizione: '',
+            trigger: [
+                {
+                    Validatore: (NEW: any, OLD: any, argomenti: any[], instantevent: any, surgevent: any) => {
+                        if (NEW == 'Mirko') {
+                            throw new Error("Errore, no no!!!");
+                        }
+                    }, instantevent: 'BEFORE', surgevent: ['INSERT'], nomeFunzione: 'ctr', nomeTrigger: 'ctr'
+                }
+            ],
+        }
+    })
+    nomeFiscale = '';
+
+    @decoratoreMetodo({ itemMetaMetodo: { nomeVariante: 'Rinominato1' }, itemExpressMetodo: { nomeVariante: 'Rinominato2' } })
+    SalutoDefinito() {
+        return '-Ciao : SalutoDefinito';
+    }
+
+    @decoratoreMetodo()
+    SalutoNonDefinito() {
+        return '-Ciao : SalutoNonDefinito';
+
+    }
+}
 
 function Start() {
     const tmp = GetListaClasseMeta<ListaMetadataClasse>('nomeMetadataKeyTargetFor_Metadata');
@@ -183,4 +227,5 @@ const client = new Client({
 });
 main.postgresMain.IstanziaORM(client);
 main.expressMain.ScriviFile(__dirname);
+main.postgresMain.ScriviFile(__dirname);
 main.expressMain.StartHttpServer();

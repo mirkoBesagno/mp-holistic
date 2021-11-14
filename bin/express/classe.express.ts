@@ -1,10 +1,11 @@
 import express, { Request, Response, Router } from "express";
 import { IMetaClasse, ListaMetadataClasse, MetadataClasse } from "../metadata/classe.metadata";
-import { ListaExpressMetodo } from "./metodo.express";
+import { ExpressMetodo, ListaExpressMetodo } from "./metodo.express";
 import fs from 'fs';
 import { IParametriEstratti } from "./utility/utility";
 import { ListaMetadataParametro } from "../metadata/parametro.metadata";
 import { IHtml, IRaccoltaPercorsi } from "./metodo/utility";
+import { ExpressParametro } from "./parametro.express";
 
 
 export interface IExpressClasse extends IMetaClasse {
@@ -84,30 +85,33 @@ export class ExpressClasse extends MetadataClasse implements IExpressClasse {
             }
         }
 
-        /* if (item.LogGenerale) {
-            this.metaRif.listaMetodi.forEach(element => {
-                if (element.metodoExpress.metodoEventi.onLog == undefined)
-                    element.metodoExpress.metodoEventi.onLog = item.LogGenerale;
-            });
-        } */
-
-        /* if (item.Istanziatore) {
-            this.metaRif.listaMetodi.forEach(metodo => {
-                let contiene = false;
-                metodo.listaParametri.forEach(parametro => {
-                    if (parametro.parametroExpress.autenticatore == true) contiene = true;
-                });
-                if (contiene) metodo.metodoExpress.metodoEventi.Istanziatore = item.Istanziatore;
-            });
-        } */
-
-        /* if (item.cacheOptionMemory) {
+        if (item.LogGenerale) {
             this.listaMetodi.forEach(element => {
-                if (element.metodoLimitazioni.cacheOptionMemory == undefined) {
-                    element.metodoExpress.metodoLimitazioni.cacheOptionMemory = item.cacheOptionMemory ?? { durationSecondi: 1 };
+                if ((<ExpressMetodo>element).metodoEventi.onLog == undefined)
+                    (<ExpressMetodo>element).metodoEventi.onLog = item.LogGenerale;
+            });
+            this.LogGenerale = item.LogGenerale;
+        }
+
+        if (item.Istanziatore) {
+            this.listaMetodi.forEach(metodo => {
+                let contiene = false;
+                (<ExpressMetodo>metodo).listaParametri.forEach(parametro => {
+                    if ((<ExpressParametro>parametro).autenticatore == true) contiene = true;
+                });
+                if (contiene) (<ExpressMetodo>metodo).metodoEventi.Istanziatore = item.Istanziatore;
+            });
+            this.Istanziatore = item.Istanziatore;
+        }
+
+        if (item.cacheOptionMemory) {
+            this.listaMetodi.forEach(element => {
+                if ((<ExpressMetodo>element).metodoLimitazioni.cacheOptionMemory == undefined) {
+                    (<ExpressMetodo>element).metodoLimitazioni.cacheOptionMemory = item.cacheOptionMemory ?? { durationSecondi: 1 };
                 }
             })
-        } */
+            this.cacheOptionMemory = item.cacheOptionMemory;
+        }
 
         /* if (item.classeSwagger && item.classeSwagger != '') {
             this.classeSwagger = item.classeSwagger;
@@ -168,6 +172,34 @@ export class ExpressClasse extends MetadataClasse implements IExpressClasse {
                     //debugger;
                 }
             }
+        }
+
+        if (item.LogGenerale) {
+            this.listaMetodi.forEach(element => {
+                if ((<ExpressMetodo>element).metodoEventi.onLog == undefined)
+                    (<ExpressMetodo>element).metodoEventi.onLog = item.LogGenerale;
+            });
+            this.LogGenerale = item.LogGenerale;
+        }
+
+        if (item.Istanziatore) {
+            this.listaMetodi.forEach(metodo => {
+                let contiene = false;
+                (<ExpressMetodo>metodo).listaParametri.forEach(parametro => {
+                    if ((<ExpressParametro>parametro).autenticatore == true) contiene = true;
+                });
+                if (contiene) (<ExpressMetodo>metodo).metodoEventi.Istanziatore = item.Istanziatore;
+            });
+            this.Istanziatore = item.Istanziatore;
+        }
+
+        if (item.cacheOptionMemory) {
+            this.listaMetodi.forEach(element => {
+                if ((<ExpressMetodo>element).metodoLimitazioni.cacheOptionMemory == undefined) {
+                    (<ExpressMetodo>element).metodoLimitazioni.cacheOptionMemory = item.cacheOptionMemory ?? { durationSecondi: 1 };
+                }
+            })
+            this.cacheOptionMemory = item.cacheOptionMemory;
         }
     }
     SettaPathRoot_e_Global(item: string, percorsi: IRaccoltaPercorsi, app: any) {

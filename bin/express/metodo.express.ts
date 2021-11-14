@@ -174,6 +174,7 @@ export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
         if (this.metodoEventi.onDopoAverTerminatoLaFunzione) parametri = parametri + '\tonLog :' + this.metodoEventi.onDopoAverTerminatoLaFunzione.toString() + '\n';
         if (this.metodoEventi.onPrimaDiEseguire) parametri = parametri + '\tonLog :' + this.metodoEventi.onPrimaDiEseguire.toString() + '\n';
 
+        
         const tmp = this.nomeVariante + ' | ' + this.metodoParametri.percorsi.pathGlobal + '\n' + parametri + '\n';
         ////console.log(tmp);
         return tmp;

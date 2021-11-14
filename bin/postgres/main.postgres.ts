@@ -3,7 +3,7 @@ import { GetListaClasseMeta } from "../metadata";
 import { DropAllTable, ListaPostgresClasse, PostgresClasse, TriggerUpdate_updated_at_column } from "./classe.postgres";
 import { ListaPolicy } from "./policy";
 import { Role, User } from "./role";
-
+import fs from 'fs';
 
 export interface IConnectionOption {
     user?: string | undefined;
@@ -57,7 +57,7 @@ export class MainPostgres {
 
     listaRuoli: Role[] = [];
     listaUser: User[] = [];
-    elencoQuery:string[]=[];
+    elencoQuery: string[] = [];
     listaClassi: ListaPostgresClasse;
     constructor() {
         this.listaRuoli = [];
@@ -97,11 +97,11 @@ export class MainPostgres {
         this.InizializzaUserGrantGenerale(this.elencoQuery, this.listaUser);
         return ritorno;
     }
-    IstanziaORM(client: Client){
+    IstanziaORM(client: Client) {
         client.connect().then(async (result) => {
 
             //console.log('\n!!!!!!?????######\n\n\n\n' + orm + '\n\n\n\n\n\n!!!!!!?????######\n');
-        
+
             const vetRisultatiQuery: IReturnQueryControllata[] = [];
             for (let index = 0; index < this.elencoQuery.length; index++) {
                 const element = this.elencoQuery[index];
@@ -109,13 +109,13 @@ export class MainPostgres {
                 tmp.index = index;
                 vetRisultatiQuery.push(tmp);
             }
-        
+
             console.log('*******');
             console.log('\n\n\n');
             // console.log(orm); 
             console.log('\n\n\n');
             console.log('*******');
-        
+
             let count = 0;
             const tmp1 = [];
             for (let index = 0; index < vetRisultatiQuery.length; index++) {
@@ -302,5 +302,56 @@ export class MainPostgres {
             console.log(err);
             throw err;
         }
+    }
+
+    ScriviFile(pathDoveScrivereFile: string): string {
+
+        fs.rmdirSync(pathDoveScrivereFile + '/FileGenerati_MP/postgres', { recursive: true });
+        fs.mkdirSync(pathDoveScrivereFile + '/FileGenerati_MP/postgres', { recursive: true });
+
+        try {
+            const path = pathDoveScrivereFile + '/FileGenerati_MP' + '/postgres';
+            let query: string[] = [];
+
+            fs.mkdirSync(path + '/Generici', { recursive: true });
+            for (const element of this.listaClassi) {
+                (<PostgresClasse>element).CostruisciRelazioniDB(query);
+                fs.writeFileSync(path + '/Generici/relazioni.generale', query.toString());
+            }
+            query = [];
+            for (const element of this.listaClassi) {
+                (<PostgresClasse>element).CostruisceGrant((<PostgresClasse>element).grants ?? [], query);
+                fs.writeFileSync(path + '/Generici/grant.generale', query.toString());
+            }
+            query = [];
+            for (const element of this.listaClassi) {
+                if ((<PostgresClasse>element).listaPolicy) {
+                    ((<PostgresClasse>element).listaPolicy ?? new ListaPolicy()).CostruiscePolicySicurezza(query);
+                    fs.writeFileSync(path + '/Generici/policy.generale', query.toString());
+                }
+            }
+            /*  */
+            query = [];
+            fs.mkdirSync(path + '/Specifici', { recursive: true });
+            for (const element of this.listaClassi) {
+                const pathSpec = path + '/Specifici/' + element.nomeOriginale;
+                fs.mkdirSync(pathSpec, { recursive: true });
+                query =[];
+                (<PostgresClasse>element).CostruisciRelazioniDB(query);
+                fs.writeFileSync(pathSpec + '/relazioni.' + element.nomeOriginale, query.toString());
+                query =[];
+                (<PostgresClasse>element).CostruisceGrant((<PostgresClasse>element).grants ?? [], query);
+                fs.writeFileSync(pathSpec + '/grant.' + element.nomeOriginale, query.toString());
+                if ((<PostgresClasse>element).listaPolicy) {
+                    query =[];
+                    ((<PostgresClasse>element).listaPolicy ?? new ListaPolicy()).CostruiscePolicySicurezza(query);
+                    fs.writeFileSync(pathSpec + '/policy.' + element.nomeOriginale, query.toString());
+                }
+            }
+
+        } catch (error) {
+            console.log(error);
+        }
+        return '';
     }
 }

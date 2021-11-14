@@ -64,6 +64,7 @@ export function decoratoreClasseSmall(item?: TypeDecoratoreClasseSmall): any {
 
     // eslint-disable-next-line @typescript-eslint/ban-types
     return (ctr: Function) => {
+        //const tmp: TypeDecoratoreClasse;
         DecoratoreClasse(ctr/* , item */);
     }
 }

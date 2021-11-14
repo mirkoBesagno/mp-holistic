@@ -15,8 +15,6 @@ import { ExpressClasse, ListaExpressClasse } from "./classe.express";
 import { ExpressMetodo } from "./metodo.express";
 import { StartMonitoring } from "../utility";
 import { ISpawTrigger } from "./utility/utility";
-import { ListaPostgresClasse, PostgresClasse } from "../postgres/classe.postgres";
-import { PostgresProprieta } from "../postgres/proprieta.postgres";
 
 
 
@@ -196,25 +194,6 @@ export class MainExpress {
         } catch (error) {
             return ritorno;
         }
-        ritorno = '';
-        
-        const listaClassePostgres = GetListaClasseMeta<ListaPostgresClasse>('nomeMetadataKeyTargetFor_Postgres');
-        try {
-            const query: string[] = [];
-            for (let index = 0; index < listaClassePostgres.length; index++) {
-                const classe = <PostgresClasse>tmp[index];
-                for (let index = 0; index < classe.listaMetodi.length; index++) {
-                    const metodo = <PostgresProprieta>classe.listaProprieta[index];
-                    ritorno = ritorno + '' + metodo.PrintStruttura() + '';
-                }
-            } for (let index = 0; index < query.length; index++) {
-                const element = query[index];
-                fs.mkdirSync(pathDoveScrivereFile + '/FileGenerati_MP/lista_query_' + new Date().toLocaleDateString(), { recursive: true });
-                fs.writeFileSync(pathDoveScrivereFile + '/FileGenerati_MP/lista_query' + '/query_' + index, element);
-            }
-        } catch (error) {
-            return ritorno;
-        } 
         ritorno = '';
         return ritorno;
     }
