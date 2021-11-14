@@ -161,21 +161,12 @@ export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
             const element = <ExpressParametro>this.listaParametri[index];
             parametri = parametri + element.PrintStruttura() + '\n';
         }
+        if (this.metodoEventi) parametri = parametri + this.metodoEventi.PrintStruttura();
+        if (this.metodoParametri) parametri = parametri + this.metodoParametri.PrintStruttura();
+        if (this.metodoLimitazioni) parametri = parametri + this.metodoLimitazioni.PrintStruttura();
+        if (this.metodoVettori) parametri = parametri + this.metodoVettori.PrintStruttura();
 
-        if (this.metodoEventi.onChiamataCompletata) parametri = parametri + '\tonChiamataCompletata :' + this.metodoEventi.onChiamataCompletata.toString() + '\n';
-        if (this.metodoEventi.onPrimaDiEseguireMetodo) parametri = parametri + '\tonLog :' + this.metodoEventi.onPrimaDiEseguireMetodo.toString() + '\n';
-        if (this.metodoEventi.onChiamataInErrore) parametri = parametri + '\tonChiamataInErrore :' + this.metodoEventi.onChiamataInErrore.toString() + '\n';
-        if (this.metodoEventi.onLog) parametri = parametri + '\tonLog :' + this.metodoEventi.onLog.toString() + '\n';
-        if (this.metodoEventi.Validatore) parametri = parametri + '\tonLog :' + this.metodoEventi.Validatore.toString() + '\n';
-        if (this.metodoEventi.Istanziatore) parametri = parametri + '\tonLog :' + this.metodoEventi.Istanziatore.toString() + '\n';
-        if (this.metodoEventi.onPrimaDiEseguireMetodo) parametri = parametri + '\tonPrimaDiEseguireMetodo :' + this.metodoEventi.onPrimaDiEseguireMetodo.toString() + '\n';
-        if (this.metodoEventi.onPrimaDiTerminareLaChiamata) parametri = parametri + '\tonPrimaDiTerminareLaChiamata :' + this.metodoEventi.onPrimaDiTerminareLaChiamata.toString() + '\n';
-        if (this.metodoEventi.onRispostaControllatePradefinita) parametri = parametri + '\tonRispostaControllatePradefinita :' + this.metodoEventi.onRispostaControllatePradefinita.toString() + '\n';
-        if (this.metodoEventi.onDopoAverTerminatoLaFunzione) parametri = parametri + '\tonLog :' + this.metodoEventi.onDopoAverTerminatoLaFunzione.toString() + '\n';
-        if (this.metodoEventi.onPrimaDiEseguire) parametri = parametri + '\tonLog :' + this.metodoEventi.onPrimaDiEseguire.toString() + '\n';
-
-        
-        const tmp = this.nomeVariante + ' | ' + this.metodoParametri.percorsi.pathGlobal + '\n' + parametri + '\n';
+        const tmp = this.nomeVariante + ' | ' + this.metodoParametri.percorsi.pathGlobal + '\n' + parametri + '\n' + '| metodo : \n' + this.metodoAvviabile;
         ////console.log(tmp);
         return tmp;
     }

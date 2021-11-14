@@ -60,4 +60,14 @@ export class MetodoParametri implements IMetodoParametri {
         else
             this.percorsi.pathGlobal = this.percorsi.pathGlobal + '/' + this.path;
     }
+
+    PrintStruttura(): string {
+        let ritorno = '';
+        if (this.percorsi) ritorno = ritorno + '\npercorsi :\n' + JSON.stringify(this.percorsi);
+        if (this.percorsoIndipendente) ritorno = ritorno + '\npercorsoIndipendente :\n' + this.percorsoIndipendente;
+        if (this.tipo) ritorno = ritorno + '\ntipo :\n' + this.tipo;
+        if (this.path) ritorno = ritorno + '\npath :\n' + this.path;
+        if (this.interazione) ritorno = ritorno + '\ninterazione :\n' + this.interazione;
+        return ritorno;
+    }
 }

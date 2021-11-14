@@ -26,7 +26,7 @@ export interface IMetodoLimitazioni {
 /**
  * 
  */
- export class MetodoLimitazioni implements IMetodoLimitazioni {
+export class MetodoLimitazioni implements IMetodoLimitazioni {
 
     isSpawTrigger?: string;
     checkSpawTrigger?: ISpawTrigger[];
@@ -71,6 +71,18 @@ export interface IMetodoLimitazioni {
              if(element.nomeVariabile)
          } */
         return false;
+    }
+    PrintStruttura(): string {
+        let ritorno = '';
+        if (this.isSpawTrigger) ritorno = ritorno + '\nisSpawTrigger :\n' + this.isSpawTrigger;
+        if (this.checkSpawTrigger) ritorno = ritorno + '\ncacheOptionMemory :\n' + this.cacheOptionMemory;
+        if (this.slow_down) ritorno = ritorno + '\nslow_down :\n' + this.slow_down;
+        if (this.rate_limit) ritorno = ritorno + '\nrate_limit :\n' + this.rate_limit;
+        if (this.cors) ritorno = ritorno + '\ncors :\n' + this.cors;
+        if (this.helmet) ritorno = ritorno + '\nhelmet :\n' + this.helmet;
+        if (this.middleware) ritorno = ritorno + '\nmiddleware :\n' + this.middleware;
+        if (this.cacheOptionMemory) ritorno = ritorno + '\ncacheOptionMemory :\n' + this.cacheOptionMemory;
+        return ritorno;
     }
 
 }

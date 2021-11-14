@@ -222,7 +222,7 @@ const client = new Client({
     user: 'postgres',
     host: 'localhost',
     database: 'test',
-    password: 'postgres',
+    password: 'DGRmjYyNw38iH5mwsr4qXvZZfgNljw',//'postgres', //DGRmjYyNw38iH5mwsr4qXvZZfgNljw
     port: 5432,
 });
 main.postgresMain.IstanziaORM(client);
