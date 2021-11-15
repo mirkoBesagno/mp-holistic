@@ -12,13 +12,13 @@ import { ListaPostgresProprieta, PostgresProprieta } from "./proprieta.postgres"
 export interface IPostgresClasse extends IMetaClasse {
     queryPerVista?: string,
 
-    nomeTabella: string,
+    nomeTabella?: string,
     like?: string,
     estende?: string,
-    abilitaCreatedAt: boolean,
-    abilitaUpdatedAt: boolean,
-    abilitaDeletedAt: boolean,
-    creaId: boolean,
+    abilitaCreatedAt?: boolean,
+    abilitaUpdatedAt?: boolean,
+    abilitaDeletedAt?: boolean,
+    creaId?: boolean,
     listaPolicy?: ListaPolicy,
     grants?: IGrant[],
     multiUnique?: { colonneDiRiferimento: string[] }[]
@@ -42,14 +42,14 @@ export class PostgresClasse extends MetadataClasse implements IPostgresClasse {
     faxSimile_abilitaCreatedAt = `updated_at timestamp with time zone  NOT NULL  DEFAULT current_timestamp`;
     faxSimile_abilitaUpdatedAt = `deleted_at timestamp with time zone`;
 
-    constructor(item:IPostgresClasse) {
+    constructor(item: IPostgresClasse) {
         super(item);
-        this.creaId = item.creaId;
-        this.nomeTabella = item.nomeTabella;
+        this.creaId = item.creaId ?? true;
+        this.nomeTabella = item.nomeTabella ?? this.nomeOriginale;
         //this.listaProprieta = new Lista();
-        this.abilitaCreatedAt = item.abilitaCreatedAt;
-        this.abilitaDeletedAt = item.abilitaDeletedAt;
-        this.abilitaUpdatedAt = item.abilitaUpdatedAt;
+        this.abilitaCreatedAt = item.abilitaCreatedAt ?? true;
+        this.abilitaDeletedAt = item.abilitaDeletedAt ?? true;
+        this.abilitaUpdatedAt = item.abilitaUpdatedAt ?? true;
     }
     faxsSimileIntestazione = 'CREATE TABLE IF NOT EXISTS ';
     faxsSimileIntestazioneView = 'CREATE OR REPLACE VIEW ';
@@ -60,7 +60,7 @@ export class PostgresClasse extends MetadataClasse implements IPostgresClasse {
         else if (this.estende && padreEreditario == false) rigaDaInserire = ') INHERITS("' + this.estende + '");' + '\n';
         else if (this.like && padreEreditario == false) rigaDaInserire = 'LIKE "' + this.like + '"' + '\n';
         else { rigaDaInserire = ''; }
-        if (rigaDaInserire && rigaDaInserire != '') {
+        if (rigaDaInserire != undefined) {
             let checkTmp = false;
             if (this.queryPerVista == undefined || this.queryPerVista == '') {
                 ritornoTmp = ritornoTmp + this.faxsSimileIntestazione + '"' + this.nomeTabella + '"' + ' (' + '\n';
@@ -191,7 +191,7 @@ export class PostgresClasse extends MetadataClasse implements IPostgresClasse {
         }
         return ritorno;
     }
-    
+
 
     Mergia(item: PostgresClasse) {
         super.Mergia(item);

@@ -158,22 +158,7 @@ export class Persona {
 } */
 
 
-@decoratoreClasse({
-    itemMetaClasse: {
-        nomeVariante: 'a'
-    },
-    itemExpressClasse: {
-        nomeVariante: 'b'
-    },
-    itemPostgresClasse: {
-        nomeVariante: 'b',
-        abilitaCreatedAt: true,
-        abilitaUpdatedAt: true,
-        abilitaDeletedAt: true,
-        creaId: true,
-        nomeTabella: 'b'
-    }
-})
+@decoratoreClasse({ itemMetaClasse: {}, itemExpressClasse: {}, itemPostgresClasse: {} })
 export class Persona {
 
     @decoratoreProprieta({
@@ -205,6 +190,37 @@ export class Persona {
     }
 }
 
+@decoratoreClasse({ itemMetaClasse: {}, itemExpressClasse: {}, itemPostgresClasse: {} })
+export class Oggetto {
+
+    @decoratoreProprieta({
+        itemMetaProprieta: { tipo: 'varchar(n)', nome: 'nomeFiscale' },
+        itemPostgresProprieta: {
+            nome: 'nomeFiscale', tipo: 'varchar(n)', sommario: '', descrizione: '',
+            trigger: [
+                {
+                    Validatore: (NEW: any, OLD: any, argomenti: any[], instantevent: any, surgevent: any) => {
+                        if (NEW == 'Mirko') {
+                            throw new Error("Errore, no no!!!");
+                        }
+                    }, instantevent: 'BEFORE', surgevent: ['INSERT'], nomeFunzione: 'ctr', nomeTrigger: 'ctr'
+                }
+            ],
+        }
+    })
+    nomeFiscale = '';
+
+    @decoratoreMetodo({ itemMetaMetodo: { nomeVariante: 'Rinominato1' }, itemExpressMetodo: { nomeVariante: 'Rinominato2' } })
+    SalutoDefinito() {
+        return '-Ciao : SalutoDefinito';
+    }
+
+    @decoratoreMetodo()
+    SalutoNonDefinito() {
+        return '-Ciao : SalutoNonDefinito';
+
+    }
+}
 function Start() {
     const tmp = GetListaClasseMeta<ListaMetadataClasse>('nomeMetadataKeyTargetFor_Metadata');
     const tmp1 = GetListaClasseMeta<ListaExpressClasse>('nomeMetadataKeyTargetFor_Express');
@@ -222,7 +238,7 @@ const client = new Client({
     user: 'postgres',
     host: 'localhost',
     database: 'test',
-    password: 'DGRmjYyNw38iH5mwsr4qXvZZfgNljw',//'postgres', //DGRmjYyNw38iH5mwsr4qXvZZfgNljw
+    password: 'postgres',//'postgres', //DGRmjYyNw38iH5mwsr4qXvZZfgNljw
     port: 5432,
 });
 main.postgresMain.IstanziaORM(client);

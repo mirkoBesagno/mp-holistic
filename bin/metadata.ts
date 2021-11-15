@@ -84,8 +84,8 @@ export class Meta implements IMeta, ICompare {
         return this;
     }
 }
-export interface IsMerge{
-    Mergia(item: ListaMeta):void
+export interface IsMerge {
+    Mergia(item: ListaMeta): void
 }
 export class ListaMeta extends Array<Meta> implements IsMerge {
 
@@ -188,4 +188,4 @@ export function SalvaListaMetaClasse(metaKey: metadataKey, item: ListaMeta) {
     } */
     return undefined;
 }
-export type metadataKey = 'nomeMetadataKeyTargetFor_Metadata' | 'nomeMetadataKeyTargetFor_Express' |'nomeMetadataKeyTargetFor_Postgres'; 
+export type metadataKey = 'nomeMetadataKeyTargetFor_Metadata' | 'nomeMetadataKeyTargetFor_Express' | 'nomeMetadataKeyTargetFor_Postgres'; 

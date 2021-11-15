@@ -180,13 +180,27 @@ export class MainExpress {
             for (let index = 0; index < tmp.length; index++) {
                 const classe = <ExpressClasse>tmp[index];
                 const path = pathDoveScrivereFile + '/FileGenerati_MP' + '/api' + '/' + classe.nomeOriginale;
+
                 fs.mkdirSync(path, { recursive: true });
                 let ritornoClass = '';
+                if (classe.Istanziatore) ritornoClass = ritornoClass + '\nIstanziatore : ' + classe.Istanziatore;
+                if (classe.LogGenerale) ritornoClass = ritornoClass + '\nLogGenerale : ' + classe.LogGenerale;
+                if (classe.cacheOptionMemory) ritornoClass = ritornoClass + '\ncacheOptionMemory : ' + JSON.stringify(classe.cacheOptionMemory);
+                if (classe.html) ritornoClass = ritornoClass + '\nhtml : ' + JSON.stringify(classe.html);
+                if (classe.id) ritornoClass = ritornoClass + '\nid : ' + classe.id;
+                if (classe.nome) ritornoClass = ritornoClass + '\nnome : ' + classe.nome;
+                if (classe.nomeOriginale) ritornoClass = ritornoClass + '\nnomeOriginale : ' + classe.nomeOriginale;
+                if (classe.nomeVariante) ritornoClass = ritornoClass + '\nnomeVariante : ' + classe.nomeVariante;
+                if (classe.path) ritornoClass = ritornoClass + '\npath : ' + classe.path;
+                if (classe.percorsi) ritornoClass = ritornoClass + '\npercorsi : ' + JSON.stringify(classe.percorsi);
+                if (classe.rotte) ritornoClass = ritornoClass + '\nrotte : ' + classe.rotte;
+                fs.writeFileSync(path + '/' + classe.nomeOriginale + '.classe', ritornoClass);
+                ritornoClass = ritornoClass +'\n';
                 for (let index = 0; index < classe.listaMetodi.length; index++) {
                     const metodo = classe.listaMetodi[index];
                     let ritorno = '';
                     ritorno = ritorno + '' + (<ExpressMetodo>metodo).PrintStruttura() + '';
-                    ritornoClass = ritornoClass + ritorno + '\n';
+                    ritornoClass = ritornoClass + ritorno + '\n********************\n';
                     fs.writeFileSync(path + '/' + metodo.nomeOriginale, ritorno);
                 }
                 fs.writeFileSync(path + '/' + classe.nomeOriginale + '.collezione', ritornoClass);

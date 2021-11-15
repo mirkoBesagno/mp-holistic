@@ -63,11 +63,11 @@ export class MetodoParametri implements IMetodoParametri {
 
     PrintStruttura(): string {
         let ritorno = '';
-        if (this.percorsi) ritorno = ritorno + '\npercorsi :\n' + JSON.stringify(this.percorsi);
-        if (this.percorsoIndipendente) ritorno = ritorno + '\npercorsoIndipendente :\n' + this.percorsoIndipendente;
-        if (this.tipo) ritorno = ritorno + '\ntipo :\n' + this.tipo;
-        if (this.path) ritorno = ritorno + '\npath :\n' + this.path;
-        if (this.interazione) ritorno = ritorno + '\ninterazione :\n' + this.interazione;
+        if (this.percorsi) ritorno = ritorno + '\npercorsi :' + JSON.stringify(this.percorsi);
+        if (this.percorsoIndipendente) ritorno = ritorno + '\npercorsoIndipendente :' + JSON.stringify(this.percorsoIndipendente);
+        if (this.tipo) ritorno = ritorno + '\ntipo :' + this.tipo;
+        if (this.path) ritorno = ritorno + '\npath :' + this.path;
+        if (this.interazione) ritorno = ritorno + '\ninterazione :' + this.interazione;
         return ritorno;
     }
 }

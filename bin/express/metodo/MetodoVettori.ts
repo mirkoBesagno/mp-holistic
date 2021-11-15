@@ -146,10 +146,10 @@ export class MetodoVettori implements IMetodoVettori {
     }
     PrintStruttura() {
         let ritorno = '';
-        if(this.ListaSanificatori)ritorno = ritorno + '\nListaSanificatori :\n'+this.ListaSanificatori;
-        if(this.RisposteDiControllo)ritorno = ritorno + '\nRisposteDiControllo :\n'+this.RisposteDiControllo;
-        if(this.nomiClasseRiferimento)ritorno = ritorno + '\nnomiClasseRiferimento :\n'+this.nomiClasseRiferimento;
-        if(this.listaHtml)ritorno = ritorno + '\nlistaHtml :\n'+this.listaHtml;
+        if (this.ListaSanificatori) ritorno = ritorno + '\nListaSanificatori :' + JSON.stringify(this.ListaSanificatori);
+        if (this.RisposteDiControllo) ritorno = ritorno + '\nRisposteDiControllo :' + JSON.stringify(this.RisposteDiControllo);
+        if (this.nomiClasseRiferimento) ritorno = ritorno + '\nnomiClasseRiferimento :' + JSON.stringify(this.nomiClasseRiferimento);
+        if (this.listaHtml) ritorno = ritorno + '\nlistaHtml :' + JSON.stringify(this.listaHtml);
         return ritorno;
     }
 }

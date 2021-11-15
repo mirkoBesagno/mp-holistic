@@ -74,14 +74,14 @@ export class MetodoLimitazioni implements IMetodoLimitazioni {
     }
     PrintStruttura(): string {
         let ritorno = '';
-        if (this.isSpawTrigger) ritorno = ritorno + '\nisSpawTrigger :\n' + this.isSpawTrigger;
-        if (this.checkSpawTrigger) ritorno = ritorno + '\ncacheOptionMemory :\n' + this.cacheOptionMemory;
-        if (this.slow_down) ritorno = ritorno + '\nslow_down :\n' + this.slow_down;
-        if (this.rate_limit) ritorno = ritorno + '\nrate_limit :\n' + this.rate_limit;
-        if (this.cors) ritorno = ritorno + '\ncors :\n' + this.cors;
-        if (this.helmet) ritorno = ritorno + '\nhelmet :\n' + this.helmet;
-        if (this.middleware) ritorno = ritorno + '\nmiddleware :\n' + this.middleware;
-        if (this.cacheOptionMemory) ritorno = ritorno + '\ncacheOptionMemory :\n' + this.cacheOptionMemory;
+        if (this.isSpawTrigger) ritorno = ritorno + '\nisSpawTrigger :' + this.isSpawTrigger;
+        if (this.checkSpawTrigger) ritorno = ritorno + '\ncacheOptionMemory :' + JSON.stringify(this.cacheOptionMemory);
+        if (this.slow_down) ritorno = ritorno + '\nslow_down :' + JSON.stringify(this.slow_down);
+        if (this.rate_limit) ritorno = ritorno + '\nrate_limit :' + JSON.stringify(this.rate_limit);
+        if (this.cors) ritorno = ritorno + '\ncors :' + JSON.stringify(this.cors);
+        if (this.helmet) ritorno = ritorno + '\nhelmet :' + JSON.stringify(this.helmet);
+        if (this.middleware) ritorno = ritorno + '\nmiddleware :' + JSON.stringify(this.middleware);
+        if (this.cacheOptionMemory) ritorno = ritorno + '\ncacheOptionMemory :' + JSON.stringify(this.cacheOptionMemory);
         return ritorno;
     }
 
