@@ -85,6 +85,10 @@ export function decoratoreClasse(item?: TypeDecoratoreClasse): any {
 
     // eslint-disable-next-line @typescript-eslint/ban-types
     return (ctr: Function) => {
+        if (item == undefined) item = { itemMetaClasse: {}, itemPostgresClasse: {}, itemExpressClasse: {} };
+        if (item.itemExpressClasse == undefined) item.itemExpressClasse = {};
+        if (item.itemMetaClasse == undefined) item.itemMetaClasse = {};
+        if (item.itemPostgresClasse == undefined) item.itemPostgresClasse = {};
         DecoratoreClasse(ctr, item);
     }
 }

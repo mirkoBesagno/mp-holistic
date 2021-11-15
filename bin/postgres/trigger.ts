@@ -9,8 +9,8 @@ export type TypeSurgevent = 'INSERT' | 'UPDATE' | 'DELETE' | 'TRUNCATE';
 
 
 export interface ITrigger {
-    instantevent: TypeIstantevent,
-    surgevent: TypeSurgevent[],
+    instantevent?: TypeIstantevent,
+    surgevent?: TypeSurgevent[],
     nomeTrigger: string,
     nomeFunzione: string,
     Validatore: string | ((NEW: any, OLD: any, argomenti: any[], instantevent: any, surgevent: any) => void | Error),
@@ -79,15 +79,15 @@ export class Trigger implements ITrigger {
     }
     constructor(item?: ITrigger) {
         if (item) {
-            this.instantevent = item.instantevent;
-            this.surgevent = item.surgevent;
+            this.instantevent = item.instantevent ?? 'BEFORE';
+            this.surgevent = item.surgevent ?? ['INSERT','DELETE','UPDATE'];
             this.nomeTrigger = item.nomeTrigger;
             this.nomeFunzione = item.nomeFunzione;
             this.Validatore = item.Validatore;
             this.typeFunction = item.typeFunction;
         } else {
             this.instantevent = 'AFTER';
-            this.surgevent = [];
+            this.surgevent = ['INSERT','DELETE','UPDATE'];
             this.nomeTrigger = '';
             this.nomeFunzione = '';
             this.Validatore = '';

@@ -316,13 +316,13 @@ export class MainPostgres {
             fs.mkdirSync(path + '/Generici', { recursive: true });
             for (const element of this.listaClassi) {
                 (<PostgresClasse>element).CostruisciCreazioneDB(query, false);
-                fs.writeFileSync(path + '/Generici/relazioni.generale', query.toString());
             }
+            fs.writeFileSync(path + '/Generici/relazioni.generale', query.toString());
             query = [];
             for (const element of this.listaClassi) {
                 (<PostgresClasse>element).CostruisceGrant((<PostgresClasse>element).grants ?? [], query);
-                fs.writeFileSync(path + '/Generici/grant.generale', query.toString());
             }
+            fs.writeFileSync(path + '/Generici/grant.generale', query.toString());
             query = [];
             for (const element of this.listaClassi) {
                 if ((<PostgresClasse>element).listaPolicy) {
@@ -330,14 +330,14 @@ export class MainPostgres {
                     fs.writeFileSync(path + '/Generici/policy.generale', query.toString());
                 }
             }
-            /*  */
-            query = [];
+                /*  */
+                query = [];
             fs.mkdirSync(path + '/Specifici', { recursive: true });
             for (const element of this.listaClassi) {
                 const pathSpec = path + '/Specifici/' + element.nomeOriginale;
                 fs.mkdirSync(pathSpec, { recursive: true });
                 query = [];
-                (<PostgresClasse>element).CostruisciRelazioniDB(query);
+                (<PostgresClasse>element).CostruisciCreazioneDB(query, false);
                 fs.writeFileSync(pathSpec + '/relazioni.' + element.nomeOriginale, query.toString());
                 query = [];
                 (<PostgresClasse>element).CostruisceGrant((<PostgresClasse>element).grants ?? [], query);

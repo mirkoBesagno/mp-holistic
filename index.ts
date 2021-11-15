@@ -158,7 +158,7 @@ export class Persona {
 } */
 
 
-@decoratoreClasse({ itemMetaClasse: {}, itemExpressClasse: {}, itemPostgresClasse: {} })
+@decoratoreClasse()
 export class Persona {
 
     @decoratoreProprieta({
@@ -171,7 +171,7 @@ export class Persona {
                         if (NEW == 'Mirko') {
                             throw new Error("Errore, no no!!!");
                         }
-                    }, instantevent: 'BEFORE', surgevent: ['INSERT'], nomeFunzione: 'ctr', nomeTrigger: 'ctr'
+                    }, nomeFunzione: 'ctr', nomeTrigger: 'ctr'
                 }
             ],
         }
@@ -186,7 +186,6 @@ export class Persona {
     @decoratoreMetodo()
     SalutoNonDefinito() {
         return '-Ciao : SalutoNonDefinito';
-
     }
 }
 
