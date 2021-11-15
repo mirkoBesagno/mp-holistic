@@ -166,7 +166,7 @@ export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
         if (this.metodoLimitazioni) parametri = parametri + this.metodoLimitazioni.PrintStruttura();
         if (this.metodoVettori) parametri = parametri + this.metodoVettori.PrintStruttura();
 
-        const tmp = this.nomeVariante + ' | ' + this.metodoParametri.percorsi.pathGlobal + '\n' + parametri + '\n' + '| metodo : \n' + this.metodoAvviabile;
+        const tmp = this.nomeVariante + ' | ' + this.metodoParametri.percorsi.pathGlobal + '\n' + parametri + '\n' + 'metodo : \n' + this.metodoAvviabile;
         ////console.log(tmp);
         return tmp;
     }
