@@ -59,7 +59,7 @@ export class PostgresClasse extends MetadataClasse implements IPostgresClasse {
         if (this.estende == undefined && this.like == undefined && padreEreditario == true) rigaDaInserire = '); \n';
         else if (this.estende && padreEreditario == false) rigaDaInserire = ') INHERITS("' + this.estende + '");' + '\n';
         else if (this.like && padreEreditario == false) rigaDaInserire = 'LIKE "' + this.like + '"' + '\n';
-        else { rigaDaInserire = ''; }
+        else { rigaDaInserire = '); \n'; }
         if (rigaDaInserire != undefined) {
             let checkTmp = false;
             if (this.queryPerVista == undefined || this.queryPerVista == '') {
@@ -167,9 +167,9 @@ export class PostgresClasse extends MetadataClasse implements IPostgresClasse {
             const element = grants[index];
             const eventitesto = CostruisciEvents(element.events);
             const ruolitesto = CostruisciRuoli(element.ruoli);
-            const tmp = `GRANT ${eventitesto} 
-            ON ${this.nomeTabella} 
-            TO ${ruolitesto}
+            const tmp = `GRANT "${eventitesto}" 
+            ON "${this.nomeTabella}" 
+            TO "${ruolitesto}"
             ;`;
             elencoQuery.push(tmp);
             ritorno = ritorno + '\n' + tmp;
@@ -239,13 +239,13 @@ export class ListaPostgresClasse extends ListaMetadataClasse {
 
 
 export function TriggerDeleted_at(nomeTabella: string) {
-    return `CREATE INDEX IF NOT EXISTS idx_somethings_deleted_at ON ${nomeTabella} (deleted_at ASC);`;
+    return `CREATE INDEX IF NOT EXISTS idx_somethings_deleted_at ON "${nomeTabella}" (deleted_at ASC);`;
 }
 export function TriggerUpdate(nomeTabella: string) {
-    return `DROP TRIGGER IF EXISTS tr_somethings_updated_at ON ${nomeTabella};
+    return `DROP TRIGGER IF EXISTS tr_somethings_updated_at ON "${nomeTabella}";
         CREATE TRIGGER tr_somethings_updated_at
         BEFORE UPDATE
-        ON ${nomeTabella}
+        ON "${nomeTabella}"
         FOR EACH ROW
         EXECUTE PROCEDURE update_updated_at_column();`
 }

@@ -66,7 +66,7 @@ export class Trigger implements ITrigger {
                 CREATE TRIGGER "TR_${this.nomeTrigger}"
                     ${this.instantevent} 
                     ${tmp} 
-                    ON ${nomeTabella} 
+                    ON "${nomeTabella}" 
                     FOR EACH ROW
                     EXECUTE PROCEDURE "FN_${this.nomeFunzione}_xTR_${this.nomeTrigger}"();
                 `;

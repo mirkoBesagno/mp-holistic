@@ -239,7 +239,7 @@ export class PostgresProprieta extends MetadataProprieta implements IPostgresPro
         let tmpRitorno = '';
         if (this.tipo instanceof ORMObject) {
             /* Qui creo alter table ecc.. */
-            tmpRitorno = `ALTER TABLE ${nomeTabella}
+            tmpRitorno = `ALTER TABLE "${nomeTabella}"
             ADD CONSTRAINT "CO_${nomeTabella}_${this.tipo.tabellaRiferimento}" 
             FOREIGN KEY ("${this.nome}") 
             REFERENCES "${this.tipo.tabellaRiferimento}" (id)

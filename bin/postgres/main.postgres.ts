@@ -79,9 +79,9 @@ export class MainPostgres {
         for (const element of this.listaClassi) {
             (<PostgresClasse>element).CostruisciCreazioneDB(this.elencoQuery, true);
         }
-        for (const element of this.listaClassi) {
+        /* for (const element of this.listaClassi) {
             (<PostgresClasse>element).CostruisciCreazioneDB(this.elencoQuery, false);
-        }
+        } */
         for (const element of this.listaClassi) {
             (<PostgresClasse>element).CostruisciRelazioniDB(this.elencoQuery);
         }
