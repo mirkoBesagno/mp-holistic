@@ -159,7 +159,6 @@ export class MainPostgres {
         const tmp = await this.EseguiQueryControllata(clientConnection, querys);
         return tmp;
     }
-
     private InizializzaRuoli(/* client: Client */elencoQuery: string[], listaRuoli?: Role[]) {
         let ritornoTmp = '';
         if (listaRuoli) {
@@ -180,6 +179,7 @@ export class MainPostgres {
                 elencoQuery.push(faxsDrop);
                 elencoQuery.push(faxs);
                 ritornoTmp = faxs;
+                this.listaRuoli.push(element);
             }
         }
         return ritornoTmp;
@@ -224,6 +224,7 @@ export class MainPostgres {
                 const faxsDrop = `DROP USER IF EXISTS ${element.nome};`;
                 elencoQuery.push(faxsDrop);
                 elencoQuery.push(faxs);
+                this.listaUser.push(element);
 
                 ritornoTmp = ritornoTmp + faxs;
             }
@@ -259,7 +260,6 @@ export class MainPostgres {
         }
         return ritorno;
     }
-
     async EseguiQueryControllata(clientConnection: IConnectionOption, querys: string[]): Promise<IReturnQueryControllata[]> {
         try {
             const db = new Client({
@@ -303,7 +303,6 @@ export class MainPostgres {
             throw err;
         }
     }
-
     ScriviFile(pathDoveScrivereFile: string): string {
 
         fs.rmdirSync(pathDoveScrivereFile + '/FileGenerati_MP/postgres', { recursive: true });
