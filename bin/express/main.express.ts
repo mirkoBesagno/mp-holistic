@@ -14,8 +14,7 @@ import { GetListaClasseMeta, SalvaListaMetaClasse } from "../metadata";
 import { ExpressClasse, ListaExpressClasse } from "./classe.express";
 import { ExpressMetodo } from "./metodo.express";
 import { StartMonitoring } from "../utility";
-import { ISpawTrigger } from "./utility/utility";
-
+import { ISpawTrigger } from "./utility/utility"
 
 
 export class MainExpress {
@@ -99,8 +98,10 @@ export class MainExpress {
             const pathGlobal = '/' + this.path;
             this.percorsi.pathGlobal = pathGlobal;
 
+
             (this.serverExpressDecorato).use(express.json());
             (this.serverExpressDecorato).use(cookieParser());
+
 
             tmp.ConfiguraListaRotteApplicazione(this.path, this.percorsi, this.serverExpressDecorato);
 
@@ -195,7 +196,7 @@ export class MainExpress {
                 if (classe.percorsi) ritornoClass = ritornoClass + '\npercorsi : ' + JSON.stringify(classe.percorsi);
                 if (classe.rotte) ritornoClass = ritornoClass + '\nrotte : ' + classe.rotte;
                 fs.writeFileSync(path + '/' + classe.nomeOriginale + '.classe', ritornoClass);
-                ritornoClass = ritornoClass +'\n';
+                ritornoClass = ritornoClass + '\n';
                 for (let index = 0; index < classe.listaMetodi.length; index++) {
                     const metodo = classe.listaMetodi[index];
                     let ritorno = '';
