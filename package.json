@@ -2,6 +2,10 @@
   "name": "mp-holistic",
   "version": "1.0.0",
   "description": "",
+  "np": {
+		"yarn": false,
+		"contents": "dist"
+	},
   "main": "./out/index.js",
   "scripts": {
     "start-js": "node ./out/index.js",
@@ -9,7 +13,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build:copy": "ts-node -T scripts/copyFiles.ts",
     "build:tsc": "tsc --build tsconfig.json",
-    "build": "rimraf dist && npm run build:tsc && npm run build:copy"
+    "build": "rimraf dist && npm run build:tsc && npm run build:copy",
+    "publicare-pacchetto":"npx np"
   },
   "author": "mirko pizzini",
   "license": "ISC",

@@ -13,6 +13,8 @@
     /* "mollify": "^3.0.1", */
     /* "rate-limiter-flexible": "^0.22.4", */
     /* "uglify-js": "^3.14.2", */
+
+    ky.js al posto di super agent
     
     "@types/compression": "^1.7.2",
     "express-redis-cache": "^1.1.3",
