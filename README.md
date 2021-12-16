@@ -1,3 +1,9 @@
+# scopo
+si prefigge l'umile compito di aiutare nella creazione di :
+- un server API REST mediante express
+- un semplice ORM per Postgres
+Questo tramite decoratori o classi particolari.
+
 # termin-decorator
 
 passi per eseguire il programma:
