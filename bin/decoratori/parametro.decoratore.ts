@@ -16,7 +16,6 @@ export type TypeDecoratoreParametro = {
 }
 export function decoratoreParametro(item: TypeDecoratoreParametro) {
     return function (target: any, propertyKey: string | symbol, parameterIndex: number) {
-
         const nomeMetodo = propertyKey.toString();
         const nomeClasse = target.constructor.name;
         DecoratoreParametro(nomeClasse, nomeMetodo, parameterIndex, item);
@@ -33,6 +32,7 @@ export function DecoratoreParametro(nomeClasse: any, nomeMetodo: string, paramet
         metodo.listaParametri.CercaSeNoAggiungi(new MetadataParametro(item.itemParametro));
         SalvaListaMetaClasse('nomeMetadataKeyTargetFor_Metadata', list);
     }
+    
     if (item.itemExpressParametro) {
         const listExpress: ListaExpressClasse = GetListaClasseMeta<ListaExpressClasse>('nomeMetadataKeyTargetFor_Express', () => { return new ListaExpressClasse(); });
         const classe = listExpress.CercaSeNoAggiungi(new ExpressClasse({ nomeOriginale: nomeClasse }));

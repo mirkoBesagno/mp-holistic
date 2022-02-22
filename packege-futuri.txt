@@ -20,3 +20,8 @@
     "express-redis-cache": "^1.1.3",
     "express-session": "^1.17.2",
     "@types/csurf": "^1.11.2",
+
+    npm i tryer,
+    npm i @types/tryer,
+    npm i extra-boolean,
+    npm i is-do-and-have
