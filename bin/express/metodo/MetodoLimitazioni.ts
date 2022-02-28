@@ -30,7 +30,7 @@ export class MetodoLimitazioni implements IMetodoLimitazioni {
 
     isSpawTrigger?: string;
     checkSpawTrigger?: ISpawTrigger[];
-    slow_down: OptSlowDows = {
+    slow_down?: OptSlowDows = undefined; /* {
         windowMs: 3 * 60 * 1000, // 15 minutes
         delayAfter: 100, // allow 100 requests per 15 minutes, then...
         delayMs: 500, // begin adding 500ms of delay per request above 100:
@@ -38,20 +38,20 @@ export class MetodoLimitazioni implements IMetodoLimitazioni {
             res.status(555).send("rate_limit : onLimitReached")
             throw new Error("Errore: rate_limit : onLimitReached");
         }
-    };
-    rate_limit: OptRateLimit = {
+    }; */
+    rate_limit?: OptRateLimit = undefined/* {
         windowMs: 3 * 60 * 1000, // 15 minutes
         max: 100,
         onLimitReached: (req: Request, res: Response, options: OptRateLimit) => {
             res.status(555).send("rate_limit : onLimitReached")
             throw new Error("Errroe: rate_limit : onLimitReached");
         }
-    };
+    }; */
     cors = cors();
     helmet = helmet();
     middleware = [];
     //cacheOptionRedis: OptionsCache;
-    cacheOptionMemory: { durationSecondi: number } = { durationSecondi: 1 };
+    cacheOptionMemory?: { durationSecondi: number } = undefined;//= { durationSecondi: 1 };
     Init(item: IMetodoLimitazioni) {
         if (item.slow_down) this.slow_down = item.slow_down;
         if (item.rate_limit) this.rate_limit = item.rate_limit;

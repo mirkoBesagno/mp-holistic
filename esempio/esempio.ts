@@ -2,16 +2,16 @@
 
 import { Client } from "pg";
 import "reflect-metadata";
-import { decoratoreClasse } from "./bin/decoratori/classe.decoratore";
-import { decoratoreMetodo } from "./bin/decoratori/metodo.decoratore";
-import { decoratoreProprieta } from "./bin/decoratori/proprieta.decoratore";
-import { ListaExpressClasse } from "./bin/express/classe.express";
-import { Main } from "./bin/main/main";
-import { GetListaClasseMeta } from "./bin/metadata";
-import { ListaMetadataClasse } from "./bin/metadata/classe.metadata";
+import { decoratoreClasse } from "../bin/decoratori/classe.decoratore";
+import { decoratoreMetodo } from "../bin/decoratori/metodo.decoratore";
+import { decoratoreProprieta } from "../bin/decoratori/proprieta.decoratore";
+import { ListaExpressClasse } from "../bin/express/classe.express";
+import { Main } from "../bin/main/main";
+import { GetListaClasseMeta } from "../bin/metadata";
+import { ListaMetadataClasse } from "../bin/metadata/classe.metadata";
 
 
-/* const Saluto:{
+ const Saluto:{
     itemParametro?: IMetaParametro | undefined;
     itemExpressParametro?: IExpressParametro | undefined;
 } ={
@@ -19,9 +19,9 @@ import { ListaMetadataClasse } from "./bin/metadata/classe.metadata";
     itemExpressParametro:{
         posizione:'query'
      }
-} */
+} 
 
-/* 
+/*
 @decoratoreClasse({
     itemMetaClasse: {
         nomeVariante: 'a'
@@ -153,7 +153,8 @@ export class Persona {
     SalutoDefinitoConParametriNelDcoratoreMetodoValidato(nome: string) {
         return '-Ciao : SalutoDefinitoConParametriNelDcoratoreMetodo con parametri: ' + nome + '   -; Sono fiscalmente: ' + this.nomeFiscale + '-;';
     }
-} */
+} 
+*/
 
 
 @decoratoreClasse()

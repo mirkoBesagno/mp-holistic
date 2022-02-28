@@ -174,8 +174,8 @@ export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
     ConfiguraRotteSwitch(app: any, percorsoTmp: string, middlew: any[]) {
 
         let corsOptions = {};
-        const apiRateLimiter = rateLimit(this.metodoLimitazioni.rate_limit);
-        const apiSpeedLimiter = slowDown(this.metodoLimitazioni.slow_down);
+        const apiRateLimiter = this.metodoLimitazioni.rate_limit ? rateLimit(this.metodoLimitazioni.rate_limit) : undefined;
+        const apiSpeedLimiter = this.metodoLimitazioni.slow_down ? slowDown(this.metodoLimitazioni.slow_down) : undefined;
 
         if (this.metodoLimitazioni.isSpawTrigger && MainExpress.isSottoProcesso == true) {
             //
