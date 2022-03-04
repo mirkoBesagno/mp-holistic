@@ -97,8 +97,11 @@ export class MainPostgres {
         this.InizializzaUserGrantGenerale(this.elencoQuery, this.listaUser);
         return ritorno;
     }
-    IstanziaORM(client: Client) {
-        client.connect().then(async (result) => {
+    async IstanziaORM(client: Client) {
+        try {
+
+            await client.connect();
+
 
             //console.log('\n!!!!!!?????######\n\n\n\n' + orm + '\n\n\n\n\n\n!!!!!!?????######\n');
 
@@ -151,9 +154,9 @@ export class MainPostgres {
             console.log('\n\n\n');
             console.log('*******');
             count = 0;
-        }).catch((err: any) => {
-            console.log("ciao");
-        });
+        } catch (error) {
+            console.log(error);
+        }
     }
     async EseguiListaQuery(clientConnection: IConnectionOption, querys: string[]): Promise<IReturnQueryControllata[]> {
         const tmp = await this.EseguiQueryControllata(clientConnection, querys);
@@ -329,8 +332,8 @@ export class MainPostgres {
                     fs.writeFileSync(path + '/Generici/policy.generale', query.toString());
                 }
             }
-                /*  */
-                query = [];
+            /*  */
+            query = [];
             fs.mkdirSync(path + '/Specifici', { recursive: true });
             for (const element of this.listaClassi) {
                 const pathSpec = path + '/Specifici/' + element.nomeOriginale;
