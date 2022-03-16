@@ -6,12 +6,14 @@ import { decoratoreClasse } from "../bin/decoratori/classe.decoratore";
 import { decoratoreMetodo } from "../bin/decoratori/metodo.decoratore";
 import { decoratoreProprieta } from "../bin/decoratori/proprieta.decoratore";
 import { ListaExpressClasse } from "../bin/express/classe.express";
+import { IExpressParametro } from "../bin/express/parametro.express";
 import { Main } from "../bin/main/main";
 import { GetListaClasseMeta } from "../bin/metadata";
 import { ListaMetadataClasse } from "../bin/metadata/classe.metadata";
+import { IMetaParametro } from "../bin/metadata/parametro.metadata";
 
 
- const Saluto:{
+export const Saluto:{
     itemParametro?: IMetaParametro | undefined;
     itemExpressParametro?: IExpressParametro | undefined;
 } ={

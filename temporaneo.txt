@@ -1,0 +1,6 @@
+/* "@types/validator": "^13.7.1", */
+    /* "@compute.ts/boolean": "^2.0.3",
+    "@types/prelude-ls": "^1.1.29",
+    "@types/tryer": "^1.0.2", */
+    /* "prelude-ls": "^1.2.1", */
+    /* "tryer": "^1.0.1", */

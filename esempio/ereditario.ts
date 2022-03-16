@@ -1,4 +1,4 @@
-import { mpCls, mpMtd, mpPrp } from "..";
+import { mpCls, mpPrp } from "..";
 
 
 @mpCls({ itemMetaClasse: {} })
@@ -9,7 +9,7 @@ class Primo {
 }
 
 @mpCls({ itemMetaClasse: {} })
-class Secondo {
+export class Secondo {
 
     @mpPrp({
         itemMetaProprieta: { nome: '', tipo: 'any' },

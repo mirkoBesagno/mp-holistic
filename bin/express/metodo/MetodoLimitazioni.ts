@@ -6,8 +6,7 @@ import { Options as OptSlowDows } from "express-slow-down";
 import { Options as OptRateLimit } from "express-rate-limit";
 
 /* import { Options as OptionsCache } from "express-redis-cache"; */
-import { Request } from "express";
-import { Response } from "express";
+/* import { Request, Response } from "express"; */
 
 
 

@@ -1,6 +1,6 @@
 {
   "name": "mp-holistic",
-  "version": "1.0.2",
+  "version": "1.0.21",
   "description": "",
   "np": {
     "yarn": false,
@@ -37,16 +37,12 @@
     "@types/pg": "^8.6.4",
     "@types/prompts": "^2.0.14",
     "@types/swagger-ui-express": "^4.1.3",
-    "@types/validator": "^13.7.1",
     "@typescript-eslint/eslint-plugin": "^5.12.0",
     "@typescript-eslint/parser": "^5.12.0",
     "eslint": "^8.9.0",
     "typescript": "^4.5.5"
   },
   "dependencies": {
-    "@compute.ts/boolean": "^2.0.3",
-    "@types/prelude-ls": "^1.1.29",
-    "@types/tryer": "^1.0.2",
     "body-parser": "^1.19.2",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
@@ -60,11 +56,9 @@
     "node-cache": "^5.1.2",
     "nodemon": "^2.0.15",
     "pg": "^8.7.3",
-    "prelude-ls": "^1.2.1",
     "prompts": "^2.4.2",
     "reflect-metadata": "^0.1.13",
     "swagger-ui-express": "^4.3.0",
-    "tryer": "^1.0.1",
     "ts-node": "^10.5.0",
     "validator": "^13.7.0"
   }
