@@ -62,7 +62,7 @@ export class MainPostgres {
     constructor() {
         this.listaRuoli = [];
         this.listaUser = [];
-        this.listaClassi = GetListaClasseMeta<ListaPostgresClasse>('nomeMetadataKeyTargetFor_Postgres');
+        this.listaClassi = GetListaClasseMeta<ListaPostgresClasse>('nomeMetadataKeyTargetFor_Postgres', () => { return new ListaPostgresClasse();});
     }
 
     InizializzaORM(): string {
@@ -157,6 +157,10 @@ export class MainPostgres {
         } catch (error) {
             console.log(error);
         }
+    }
+    async IstanziaTutto(client: Client){
+        this.InizializzaORM();
+        await this.IstanziaORM(client);
     }
     async EseguiListaQuery(clientConnection: IConnectionOption, querys: string[]): Promise<IReturnQueryControllata[]> {
         const tmp = await this.EseguiQueryControllata(clientConnection, querys);

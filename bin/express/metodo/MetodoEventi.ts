@@ -18,7 +18,7 @@ export interface IMetodoEventi {
 
     Validatore?: (parametri: IParametriEstratti, listaParametri: ListaMetadataParametro) => IRitornoValidatore | void;
 
-    Istanziatore?: (parametri: IParametriEstratti, listaParametri: ListaMetadataParametro) => any;
+    Istanziatore?: (parametri: IParametriEstratti, listaParametri: ListaMetadataParametro) => Promise<any> | any;
 
     onRispostaControllatePradefinita?: (dati: IReturn) => IReturn | Promise<IReturn>;
 

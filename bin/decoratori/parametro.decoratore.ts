@@ -10,8 +10,18 @@ import { MetadataMetodo } from "../metadata/metodo.metadata";
 import { IMetaParametro, MetadataParametro } from "../metadata/parametro.metadata";
 
 
+/**
+ * @param itemParametro: parametro fondamentale per confgigurare il aprametro come metadata
+ * @param itemExpressoParametro: parametro fondamentale per configurare express
+ */
 export type TypeDecoratoreParametro = {
+    /**
+     * parametro fondamentale per confgigurare il aprametro come metadata
+     */
     itemParametro?: IMetaParametro,
+    /**
+     * parametro fondamentale per configurare express
+     */
     itemExpressParametro?: IExpressParametro
 }
 export function decoratoreParametro(item: TypeDecoratoreParametro) {
@@ -23,23 +33,28 @@ export function decoratoreParametro(item: TypeDecoratoreParametro) {
 }
 
 export function DecoratoreParametro(nomeClasse: any, nomeMetodo: string, parameterIndex: number, item: TypeDecoratoreParametro) {
-    if (item.itemParametro) {
-        const list: ListaMetadataClasse = GetListaClasseMeta<ListaMetadataClasse>('nomeMetadataKeyTargetFor_Metadata', () => { return new ListaMetadataClasse(); });
-        const classe = list.CercaSeNoAggiungi(new MetadataClasse({ nomeOriginale: nomeClasse }));
-        const metodo = classe.listaMetodi.CercaSeNoAggiungi(new MetadataMetodo({ nomeOriginale: nomeMetodo }));
-        item.itemParametro.nomeOriginale = parameterIndex.toString();
-        item.itemParametro.indexParameter = parameterIndex;
-        metodo.listaParametri.CercaSeNoAggiungi(new MetadataParametro(item.itemParametro));
-        SalvaListaMetaClasse('nomeMetadataKeyTargetFor_Metadata', list);
-    }
-    
-    if (item.itemExpressParametro) {
-        const listExpress: ListaExpressClasse = GetListaClasseMeta<ListaExpressClasse>('nomeMetadataKeyTargetFor_Express', () => { return new ListaExpressClasse(); });
-        const classe = listExpress.CercaSeNoAggiungi(new ExpressClasse({ nomeOriginale: nomeClasse }));
-        const metodo = classe.listaMetodi.CercaSeNoAggiungi(new ExpressMetodo({ nomeOriginale: nomeMetodo }));
-        item.itemExpressParametro.nomeOriginale = parameterIndex.toString();
-        item.itemExpressParametro.indexParameter = parameterIndex;
-        metodo.listaParametri.CercaSeNoAggiungi(new ExpressParametro(item.itemExpressParametro));
-        SalvaListaMetaClasse('nomeMetadataKeyTargetFor_Express', listExpress);
+    try {
+        if (item.itemParametro) {
+            const list: ListaMetadataClasse = GetListaClasseMeta<ListaMetadataClasse>('nomeMetadataKeyTargetFor_Metadata', () => { return new ListaMetadataClasse(); });
+            const classe = list.CercaSeNoAggiungi(new MetadataClasse({ nomeOriginale: nomeClasse }));
+            const metodo = classe.listaMetodi.CercaSeNoAggiungi(new MetadataMetodo({ nomeOriginale: nomeMetodo }));
+            item.itemParametro.nomeOriginale = parameterIndex.toString();
+            item.itemParametro.indexParameter = parameterIndex;
+            metodo.listaParametri.CercaSeNoAggiungi(new MetadataParametro(item.itemParametro));
+            SalvaListaMetaClasse('nomeMetadataKeyTargetFor_Metadata', list);
+        }
+
+        if (item.itemExpressParametro) {
+            const listExpress: ListaExpressClasse = GetListaClasseMeta<ListaExpressClasse>('nomeMetadataKeyTargetFor_Express', () => { return new ListaExpressClasse(); });
+            const classe = listExpress.CercaSeNoAggiungi(new ExpressClasse({ nomeOriginale: nomeClasse }));
+            const metodo = classe.listaMetodi.CercaSeNoAggiungi(new ExpressMetodo({ nomeOriginale: nomeMetodo }));
+            item.itemExpressParametro.nomeOriginale = parameterIndex.toString();
+            item.itemExpressParametro.indexParameter = parameterIndex;
+            metodo.listaParametri.CercaSeNoAggiungi(new ExpressParametro(item.itemExpressParametro));
+            SalvaListaMetaClasse('nomeMetadataKeyTargetFor_Express', listExpress);
+        }
+    } catch (error) {
+        console.log(error);        
+        throw error;
     }
 }

@@ -21,17 +21,33 @@ import { IReturn, CalcolaChiaveMemoryCache, InizializzaLogbaseIn, Rispondi, Cons
 import { IRaccoltaPercorsi } from "./metodo/utility";
 import { ErroreMio } from "./utility/ErroreMio";
 import { MainExpress } from "./main.express";
+import { GenerateID } from "../utility";
+import { IMetodoSpawProcess, MetodoSpawProcess } from "./metodo/MetodoSpawProcess";
 
+
+export interface ITracciamentoQualita {
+    id: string,
+    inizio: number,
+    fine?: number,
+    differenza?: number,
+    req?: any,
+    res?: any
+}
 
 export interface IExpressMetodo extends IMetaMetodo {
     metodoEventi?: IMetodoEventi;
     metodoParametri?: IMetodoParametri;
     metodoLimitazioni?: IMetodoLimitazioni;
     metodoVettori?: IMetodoVettori;
+    /**
+     * Attenzione! questo è da attivare solo sul metodo che determinera l'avvio del nuovo processo!
+     */
+    metodoSpawProcess?: IMetodoSpawProcess;
 }
 
 export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
 
+    metodoSpawProcess: MetodoSpawProcess = new MetodoSpawProcess();
     metodoEventi: MetodoEventi = new MetodoEventi();
     metodoParametri: MetodoParametri = new MetodoParametri();
     metodoLimitazioni: MetodoLimitazioni = new MetodoLimitazioni();
@@ -43,13 +59,15 @@ export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
         if (item.metodoEventi)
             this.metodoEventi.Init(item.metodoEventi);
         if (item.metodoParametri)
-            this.metodoParametri.Init(item.metodoParametri);
+            this.metodoParametri.Init(item.metodoParametri, this.nomeVariante);
         else
             this.metodoParametri.Init({ path: this.nomeVariante });
         if (item.metodoLimitazioni)
             this.metodoLimitazioni.Init(item.metodoLimitazioni);
         if (item.metodoVettori)
             this.metodoVettori.Init(item.metodoVettori);
+        if (item.metodoSpawProcess)
+            this.metodoSpawProcess.Init(item.metodoSpawProcess);
     }
     Init(item: ExpressMetodo) {
         /* this.metodoParametri.path = item.nomeVariante; */
@@ -58,9 +76,10 @@ export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
         if (item.metodoAvviabile)
             this.metodoAvviabile = item.metodoAvviabile;
         this.metodoEventi.Init(item.metodoEventi);
-        this.metodoParametri.Init(item.metodoParametri);
+        this.metodoParametri.Init(item.metodoParametri, this.nomeVariante);
         this.metodoLimitazioni.Init(item.metodoLimitazioni);
         this.metodoVettori.Init(item.metodoVettori);
+        this.metodoSpawProcess.Init(item.metodoSpawProcess);
     }
     Mergia(item: ExpressMetodo) {
         super.Mergia(item);
@@ -69,9 +88,10 @@ export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
         if (item.metodoAvviabile)
             this.metodoAvviabile = item.metodoAvviabile;
         this.metodoEventi.Init(item.metodoEventi);
-        this.metodoParametri.Init(item.metodoParametri);
+        this.metodoParametri.Init(item.metodoParametri, this.nomeVariante);
         this.metodoLimitazioni.Init(item.metodoLimitazioni);
         this.metodoVettori.Init(item.metodoVettori);
+        this.metodoSpawProcess.Init(item.metodoSpawProcess);
     }
     GetThis() { return this; }
 
@@ -80,29 +100,14 @@ export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
         this.metodoParametri.percorsi.patheader = percorsi.patheader;
         this.metodoParametri.percorsi.porta = percorsi.porta;
 
-        /*  */
-        //const pathGlobal = percorsi.pathGlobal + '/' + this.path;
-        //this.percorsi.pathGlobal = pathGlobal;
-
         const pathGlobalTmp = percorsi.pathGlobal;
         const pathGlobal = percorsi.pathGlobal + '/' + this.metodoParametri.path;
         this.metodoParametri.percorsi.pathGlobal = pathGlobal;
         /*  */
-
         const middlew: any[] = [];
-        /* this.middleware.forEach(element => {
-            if (element instanceof ExpressMetodo) {
-                const listaMidd = GetListaMiddlewareMetaData();
-                const midd = listaMidd.CercaConNomeSeNoAggiungi(element.nome.toString());
-                middlew.push(midd.ConvertiInMiddleare());
-            }
-        }); */
 
         let percorsoTmp = '';
-        /*  */
 
-        /* if (this.percorsoIndipendente) percorsoTmp = '/' + this.path;
-        else percorsoTmp = this.percorsi.pathGlobal + '/' + this.path; */
         if (this.metodoParametri.percorsoIndipendente) {
             percorsoTmp = '/' + this.metodoParametri.path;
             this.metodoParametri.percorsi.pathGlobal = percorsoTmp;
@@ -110,7 +115,6 @@ export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
         else {
             percorsoTmp = this.metodoParametri.percorsi.pathGlobal;
         }
-        /*  */
 
         if (this.metodoAvviabile != undefined) {
             this.ConfiguraRotteSwitch(app, percorsoTmp, middlew);
@@ -127,9 +131,7 @@ export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
                     this.ConfiguraRotteHtml(app, percorsoTmp, element.contenuto);
                 }
             }
-
         }
-
     }
 
     ConfiguraRotteHtml(app: any, percorsoTmp: string, contenuto: string) {
@@ -174,10 +176,14 @@ export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
     ConfiguraRotteSwitch(app: any, percorsoTmp: string, middlew: any[]) {
 
         let corsOptions = {};
-        const apiRateLimiter = this.metodoLimitazioni.rate_limit ? rateLimit(this.metodoLimitazioni.rate_limit) : undefined;
-        const apiSpeedLimiter = this.metodoLimitazioni.slow_down ? slowDown(this.metodoLimitazioni.slow_down) : undefined;
+        const apiRateLimiter = this.metodoLimitazioni.rate_limit ?
+            rateLimit(this.metodoLimitazioni.rate_limit)
+            : undefined;
+        const apiSpeedLimiter = this.metodoLimitazioni.slow_down ?
+            slowDown(this.metodoLimitazioni.slow_down)
+            : undefined;
 
-        if (this.metodoLimitazioni.isSpawTrigger && MainExpress.isSottoProcesso == true) {
+        if (this.metodoSpawProcess.isSpawTrigger && MainExpress.isSottoProcesso == true) {
             //
             (<IReturn>this.metodoAvviabile).body;
             corsOptions = {
@@ -194,7 +200,9 @@ export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
                 this.metodoLimitazioni.helmet,
                 middlew,
                 //cacheMiddleware.route(this.cacheOptionRedis ?? <OptionsCache>{ expire: 1 , client: redisClient }),
-                apiRateLimiter, apiSpeedLimiter,/*csrfProtection,*/
+                apiRateLimiter,
+                apiSpeedLimiter,
+                /*csrfProtection,*/
                 async (req: Request, res: Response) => {
                     //console.log("GET");
                     res.statusCode = 999;
@@ -205,7 +213,7 @@ export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
         }
         else {
             //
-            //const csrfProtection = csrf({ cookie: true }) 
+            //const csrfProtection = csrf({ cookie: true })
             switch (this.metodoParametri.tipo) {
                 case 'get':
                     (<IReturn>this.metodoAvviabile).body;
@@ -223,10 +231,19 @@ export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
                         this.metodoLimitazioni.helmet,
                         middlew,
                         //cacheMiddleware.route(this.metodoLimitazioni.cacheOptionRedis ?? <OptionsCache>{ expire: 1 , client: redisClient }),
-                        apiRateLimiter, apiSpeedLimiter,/*csrfProtection,*/
+                        apiRateLimiter,
+                        apiSpeedLimiter,/*csrfProtection,*/
                         async (req: Request, res: Response) => {
                             //console.log("GET");
-                            await this.ChiamataGenerica(req, res);
+                            let id: ITracciamentoQualita = {
+                                id: GenerateID(),
+                                inizio: new Date().getTime(),
+                                differenza:undefined,
+                                fine:undefined,
+                                req:undefined,
+                                res:undefined
+                            };
+                            await this.ChiamataGenerica(req, res, id);
                         });
                     break;
                 case 'post':
@@ -247,7 +264,15 @@ export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
                         apiRateLimiter, apiSpeedLimiter,/*csrfProtection,*/
                         async (req: Request, res: Response) => {
                             //console.log("POST");
-                            await this.ChiamataGenerica(req, res);
+                            let id: ITracciamentoQualita = {
+                                id: GenerateID(),
+                                inizio: new Date().getTime(),
+                                differenza:undefined,
+                                fine:undefined,
+                                req:undefined,
+                                res:undefined
+                            };
+                            await this.ChiamataGenerica(req, res, id);
                         });
                     break;
                 case 'delete':
@@ -268,7 +293,15 @@ export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
                         apiRateLimiter, apiSpeedLimiter,/*csrfProtection,*/
                         async (req: Request, res: Response) => {
                             //console.log("DELETE");
-                            await this.ChiamataGenerica(req, res);
+                            let id: ITracciamentoQualita = {
+                                id: GenerateID(),
+                                inizio: new Date().getTime(),
+                                differenza:undefined,
+                                fine:undefined,
+                                req:undefined,
+                                res:undefined
+                            };
+                            await this.ChiamataGenerica(req, res, id);
                         });
                     break;
                 case 'patch':
@@ -289,7 +322,15 @@ export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
                         apiRateLimiter, apiSpeedLimiter,/*csrfProtection,*/
                         async (req: Request, res: Response) => {
                             //console.log("PATCH");
-                            await this.ChiamataGenerica(req, res);
+                            let id: ITracciamentoQualita = {
+                                id: GenerateID(),
+                                inizio: new Date().getTime(),
+                                differenza:undefined,
+                                fine:undefined,
+                                req:undefined,
+                                res:undefined
+                            };
+                            await this.ChiamataGenerica(req, res, id);
                         });
                     break;
                 case 'purge':
@@ -310,7 +351,15 @@ export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
                         apiRateLimiter, apiSpeedLimiter,/*csrfProtection,*/
                         async (req: Request, res: Response) => {
                             //console.log("PURGE");
-                            await this.ChiamataGenerica(req, res);
+                            let id: ITracciamentoQualita = {
+                                id: GenerateID(),
+                                inizio: new Date().getTime(),
+                                differenza:undefined,
+                                fine:undefined,
+                                req:undefined,
+                                res:undefined
+                            };
+                            await this.ChiamataGenerica(req, res, id);
                         });
                     break;
                 case 'put':
@@ -332,18 +381,29 @@ export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
                         apiSpeedLimiter,/*csrfProtection,*/
                         async (req: Request, res: Response) => {
                             //console.log("PUT");
-                            await this.ChiamataGenerica(req, res);
+                            let id: ITracciamentoQualita = {
+                                id: GenerateID(),
+                                inizio: new Date().getTime(),
+                                differenza:undefined,
+                                fine:undefined,
+                                req:undefined,
+                                res:undefined
+                            };
+                            await this.ChiamataGenerica(req, res, id);
                         });
                     break;
             }
         }
 
     }
-    async ChiamataGenerica(req: Request, res: Response) {
+    async ChiamataGenerica(req: Request, res: Response, id: ITracciamentoQualita) {
         let passato = false;
         let logIn: any;
         let logOut: any;
         let tmp: IReturn | undefined;
+        if (id && 'req' in id && req) {
+            id.req = req
+        }
         const key = this.metodoLimitazioni.cacheOptionMemory != undefined ? CalcolaChiaveMemoryCache(req) : undefined;
         const durationSecondi = this.metodoLimitazioni.cacheOptionMemory != undefined ? this.metodoLimitazioni.cacheOptionMemory.durationSecondi : undefined;
         try {
@@ -354,13 +414,14 @@ export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
             if (cachedBody == undefined || cachedBody == null) {
                 tmp = await this.Esegui(req);
                 if (tmp != undefined) {
-                    if (this.metodoEventi.onRispostaControllatePradefinita && this.metodoVettori.VerificaPresenzaRispostaControllata(tmp) == false) {
+                    if (this.metodoEventi.onRispostaControllatePradefinita &&
+                        this.metodoVettori.VerificaPresenzaRispostaControllata(tmp) == false) {
                         const rispostaPilotata = await this.metodoEventi.onRispostaControllatePradefinita(tmp)
                         /* if (this.isSpawTrigger && this.VerificaPresenzaSpawnTrigger(this.isSpawTrigger, rispostaPilotata)) {
                             console.log('è un evento scatenante dovrei avviare un nuovo processo.');
 
                         } */
-                        Rispondi(res, rispostaPilotata, key, durationSecondi);
+                        Rispondi(res, rispostaPilotata, id, key, durationSecondi);
                         //throw new Error("Attenzione, cosa stai facendo?");
                     }
                     else {
@@ -370,13 +431,13 @@ export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
                                     tmp = await this.metodoVettori.EseguiRispostaControllata(tmp);
                                 }
                                 try {
-                                    if (this.metodoLimitazioni.isSpawTrigger && this.metodoLimitazioni.VerificaPresenzaSpawnTrigger(tmp)) {
+                                    if (this.metodoSpawProcess.isSpawTrigger && this.metodoSpawProcess.VerificaPresenzaSpawnTrigger(tmp)) {
                                         if (tmp.body instanceof Object) {
-                                            const tt = (<any>tmp.body)[this.metodoLimitazioni.isSpawTrigger];
+                                            const tt = (<any>tmp.body)[this.metodoSpawProcess.isSpawTrigger];
                                             let t1 = false;
                                             for (let index = 0; index < MainExpress.vettoreProcessi.length && t1 == false; index++) {
                                                 const x = MainExpress.vettoreProcessi[index];
-                                                if (String(x.nomeVariabile) == String(this.metodoLimitazioni.isSpawTrigger)
+                                                if (String(x.nomeVariabile) == String(this.metodoSpawProcess.isSpawTrigger)
                                                     && String(x.valoreValiabile) == String(tt)) {
                                                     t1 = true;
                                                 }
@@ -409,8 +470,16 @@ export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
                                                         );
                                                 }
                                                 porta = Number(porta.toFixed(0));
-                                                const proc = exec(`node ${MainExpress.pathExe}${porta}`); //exec(`npm run start-esempio`);
-                                                MainExpress.vettoreProcessi.push({ porta: porta, nomeVariabile: this.metodoLimitazioni.isSpawTrigger, valoreValiabile: tt, vettorePossibiliPosizioni: this.metodoLimitazioni.checkSpawTrigger ?? [], processo: proc });
+                                                const temporaneamente = `node ./${MainExpress.pathExe}`;
+                                                console.log(temporaneamente);
+                                                const proc = exec(`node ./${MainExpress.pathExe}${MainExpress.pathExeIIparte}${porta}`); //exec(`npm run start-esempio`);
+                                                MainExpress.vettoreProcessi.push({
+                                                    porta: porta,
+                                                    nomeVariabile: this.metodoSpawProcess.isSpawTrigger,
+                                                    valoreValiabile: tt,
+                                                    vettorePossibiliPosizioni: this.metodoSpawProcess.checkSpawTrigger ?? [],
+                                                    processo: proc
+                                                });
 
                                             }
                                         }
@@ -418,7 +487,7 @@ export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
                                 } catch (error) {
                                     console.log(error);
                                 }
-                                Rispondi(res, tmp ?? ConstruisciErrore('Attenzione! Rimpiazzato.'), key, durationSecondi);
+                                Rispondi(res, tmp ?? ConstruisciErrore('Attenzione! Rimpiazzato.'), id, key, durationSecondi);
                             }
                             else {
                                 const risposta = this.metodoVettori.CercaRispostaConTrigger(req);
@@ -431,10 +500,10 @@ export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
                                             source = risposta.html;
                                         else
                                             throw new Error("Errorissimo");
-                                        Rispondi(res, { stato: risposta.stato, body: source }, key, durationSecondi);
+                                        Rispondi(res, { stato: risposta.stato, body: source }, id, key, durationSecondi);
                                         passato = true;
                                     } else {
-                                        Rispondi(res, tmp, key, durationSecondi);
+                                        Rispondi(res, tmp, id, key, durationSecondi);
                                         passato = true;
                                     }
                                 }
@@ -445,7 +514,7 @@ export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
                         } catch (errore: any) {
                             const err = ConstruisciErrore(errore);
                             err.stato = 598;
-                            Rispondi(res, err, key, durationSecondi);
+                            Rispondi(res, err, id, key, durationSecondi);
                         }
                     }
                     //if (this.onPrimaDiTerminareLaChiamata) tmp = this.onPrimaDiTerminareLaChiamata(tmp);
@@ -494,7 +563,7 @@ export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
                 num = tmp.stato;
                 res.statusCode = Number.parseInt('' + num);
                 res.send(tmp.body); */
-                Rispondi(res, tmp, key, durationSecondi);
+                Rispondi(res, tmp, id, key, durationSecondi);
             }
             else if (passato == false) {
                 if (error instanceof ErroreMio) {
@@ -509,7 +578,7 @@ export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
                     Rispondi(res, {
                         stato: (<ErroreMio>error).codiceErrore,
                         body: { errore: (<ErroreMio>error).message }
-                    }, key, durationSecondi);
+                    }, id, key, durationSecondi);
                 } else {
                     Rispondi(res, {
                         stato: 500,
@@ -518,7 +587,7 @@ export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
                             passato: passato,
                             info: ''
                         }
-                    }, key, durationSecondi);
+                    }, id, key, durationSecondi);
                 }
             }
             else {
@@ -529,7 +598,7 @@ export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
                         passato: passato,
                         info: ''
                     }
-                }, key, durationSecondi);
+                }, id, key, durationSecondi);
             }
             if (this.metodoEventi.onLog) {
                 this.metodoEventi.onLog(logIn, tmp, logOut, error);
@@ -613,30 +682,13 @@ export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
                 } catch (error) {
                     if (error instanceof ErroreMio) {
                         throw error;
-                        /* tmp = {
-                            body: {
-                                "Errore Interno filtrato ": 'filtrato 404 !!!',
-                                'Errore originale': (<ErroreMio>error).message,
-                                'Stack errore': (<Error>error).stack
-                            },
-                            stato: (<ErroreMio>error).codiceErrore
-                        }; */
                     }
                     else {
                         throw new ErroreMio({
                             codiceErrore: 598,
                             messaggio: (<Error>error).message,
                             percorsoErrore: (<Error>error).stack,
-                        })
-                        /* tmp = {
-                            body: {
-                                "Errore Interno filtrato ": 'internal error!!!!',
-                                'Errore originale': (<Error>error).message,
-                                'Stack errore': (<Error>error).stack,
-                                nonTrovati: parametri.nontrovato
-                            },
-                            stato: 598
-                        }; */
+                        });
                     }
                     return tmp;
                 }
@@ -682,29 +734,8 @@ export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
             attore = classeInstanziata;
             // eslint-disable-next-line prefer-spread
             tmpReturn = await classeInstanziata[this.nomeOriginale.toString()].apply(classeInstanziata, parametri.valoriParametri);
-            // eslint-disable-next-line prefer-spread
-            //tmpReturn =await vm.run( classeInstanziata[this.nomeOriginale.toString()].apply(classeInstanziata, parametri.valoriParametri));
-            console.log('lll');
-
-            /* const vm = new NodeVM({
-                console: 'inherit',
-                // pass our declared ext variable to the sandbox
-                sandbox: {},
-                require: {
-                    external: true,
-                    builtin: [],
-                    root: './',
-                },
-            });
-
-            // run your code and see the results in ext
-            vm.run(tmpReturn.apply(classeInstanziata, parametri.valoriParametri)); */
         }
         else {
-
-            //tmpReturn =await vm.run( this.metodoAvviabile/* .value */.apply(this.metodoAvviabile/* .value */, parametri.valoriParametri));
-            console.log('ppp');
-
             tmpReturn = await this.metodoAvviabile/* .value */.apply(this.metodoAvviabile/* .value */, parametri.valoriParametri);
         }
 

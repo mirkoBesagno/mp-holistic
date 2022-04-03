@@ -26,7 +26,7 @@ export class MetodoParametri implements IMetodoParametri {
     tipo: TypeMetod = 'get';
     path = '';
     interazione: TypeInterazone = 'rotta';
-    Init(item: IMetodoParametri) {
+    Init(item: IMetodoParametri, pathAlternativo?: string) {
 
         if (item.percorsoIndipendente)
             this.percorsoIndipendente = item.percorsoIndipendente;
@@ -39,7 +39,7 @@ export class MetodoParametri implements IMetodoParametri {
 
         /* else if (item.tipo == undefined && pramsIndex == 0) this.tipo = 'get';
         else if (item.tipo == undefined && pramsIndex > 0) this.tipo = 'post'; */
-        else
+        else if(this.tipo == undefined)
             this.tipo = 'get';
 
         if (item.interazione != undefined)
@@ -49,6 +49,8 @@ export class MetodoParametri implements IMetodoParametri {
 
         if (item.path != undefined)
             this.path = item.path;
+        else if (pathAlternativo && (this.path == undefined || this.path == ''))
+            this.path = pathAlternativo
 
         if (item.percorsi) {
             this.percorsi.patheader = item.percorsi.patheader;

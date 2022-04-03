@@ -4,6 +4,7 @@
 import { Request } from "express";
 import { IMetaParametro, ListaMetadataParametro, MetadataParametro } from "../metadata/parametro.metadata";
 import { ListaMetadataProprieta } from "../metadata/proprieta.metadata";
+import { VerificaGenerica } from "../utility";
 import { ErroreMio } from "./utility/ErroreMio";
 import { IParametriEstratti, IRitornoValidatore, TypeDovePossoTrovarlo, TypePosizione } from "./utility/utility";
 
@@ -30,43 +31,22 @@ export class ExpressParametro extends MetadataParametro implements IExpressParam
 
     autenticatore = false;
 
+    constructor(item: IExpressParametro) {
+        super(item);
+        if (item.posizione) this.posizione = item.posizione;
+        if (item.autenticatore) this.autenticatore = item.autenticatore;
+    }
+
     Validatore?: (parametro: any) => IRitornoValidatore;
 
     Verifica(): boolean {
         try {
-            switch (this.tipo) {
-                case 'array':
-                    this.valore = Array(this.valore);
-                    break;
-                case 'boolean':
-                    this.valore = Boolean(this.valore);
-                    break;
-                case 'date':
-                case 'timestamptz':
-                    this.valore = new Date(this.valore);
-                    break;
-                case 'decimal':
-                case 'smallint':
-                case 'integer':
-                case 'numeric':
-                case 'real':
-                case 'smallserial':
-                case 'serial':
-                    this.valore = Number(this.valore);
-                    break;
-                case 'object':
-                    this.valore = Object(this.valore);
-                    break;
-                case 'text':
-                case 'varchar(n)':
-                case 'character(n)':
-                    this.valore = String(this.valore);
-                    break;
-                case 'any': break;
-                default:
-                    return false;
+            if (VerificaGenerica(this.tipo, this.valore)) {
+                return true;
             }
-            return true;
+            else {
+                return false;
+            }
         } catch (error) {
             console.log('');
             throw error;
@@ -79,6 +59,8 @@ export class ExpressParametro extends MetadataParametro implements IExpressParam
         if (item.Validatore != undefined) this.Validatore = item.Validatore;
 
         this.autenticatore = item.autenticatore ?? false;
+        this.posizione = item.posizione ?? 'query';
+
     }
 
     PrintStruttura() {
@@ -230,5 +212,25 @@ export class ListaExpressParametro extends ListaMetadataParametro {
             }
         }
         return ritorno;
+    }
+
+    GetAutenticatore(): ExpressParametro | Array<ExpressParametro> | undefined {
+        const ritorno: Array<ExpressParametro> = [];
+        for (let index = 0; index < this.length; index++) {
+            const element = this[index];
+            if ((<ExpressParametro>element).autenticatore == true) {
+                ritorno.push(<ExpressParametro>element);
+            }
+        }
+        if (ritorno.length > 0) { 
+            if (ritorno.length == 1) {
+                return ritorno[0];
+            } else {
+                return ritorno;
+            }
+        }
+        else {
+            return undefined;
+        }
     }
 }

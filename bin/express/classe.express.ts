@@ -239,14 +239,7 @@ export class ExpressClasse extends MetadataClasse implements IExpressClasse {
                 });
         }
     }
-
 }
-
-
-
-/* export interface IListaExpressClasse extends Array<MetadataClasse> {
-    length: number;
-} */
 
 export class ListaExpressClasse extends ListaMetadataClasse {
     /* static nomeMetadataKeyTargetFor_Express = "ListaExpressClasse"; */

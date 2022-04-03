@@ -26,11 +26,15 @@ export interface ICache { body: any, stato: number }
 
 export class Main {
     expressMain: MainExpress;
-    postgresMain:MainPostgres;
-    constructor(path: string, server?: express.Express | undefined, isMultiProcesso?: boolean | undefined) {
+    postgresMain: MainPostgres;
+    constructor(path: string, server?: express.Express | undefined, isMultiProcesso?: boolean | undefined, pathExe?: string | undefined) {
         this.expressMain = new MainExpress(path, server, isMultiProcesso);
 
-        this.postgresMain= new MainPostgres();
+        this.postgresMain = new MainPostgres();
+
+        if (pathExe) {
+            MainExpress.pathExe = pathExe ?? '';
+        }
     }
-    
+
 }

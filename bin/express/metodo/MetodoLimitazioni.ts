@@ -1,9 +1,9 @@
 import cors from "cors";
 import helmet from "helmet";
-import { ISpawTrigger, IReturn } from "../utility/utility";
 
 import { Options as OptSlowDows } from "express-slow-down";
 import { Options as OptRateLimit } from "express-rate-limit";
+import { Request, Response } from "express";
 
 /* import { Options as OptionsCache } from "express-redis-cache"; */
 /* import { Request, Response } from "express"; */
@@ -12,69 +12,51 @@ import { Options as OptRateLimit } from "express-rate-limit";
 
 export interface IMetodoLimitazioni {
     slow_down?: OptSlowDows;
-    rate_limit?: OptRateLimit;
+    rate_limit?: Partial<OptRateLimit>;
     cors?: any;
     helmet?: any;
     middleware?: any[];
     /* cacheOptionRedis?: OptionsCache; */
-    cacheOptionMemory?: { durationSecondi: number };
-    isSpawTrigger?: string;
-    checkSpawTrigger?: ISpawTrigger[];
+    cacheOptionMemory?: { durationSecondi: number };    
 }
 
 /**
  * 
  */
 export class MetodoLimitazioni implements IMetodoLimitazioni {
-
-    isSpawTrigger?: string;
-    checkSpawTrigger?: ISpawTrigger[];
-    slow_down?: OptSlowDows = undefined; /* {
-        windowMs: 3 * 60 * 1000, // 15 minutes
-        delayAfter: 100, // allow 100 requests per 15 minutes, then...
-        delayMs: 500, // begin adding 500ms of delay per request above 100:
+ 
+    slow_down?: OptSlowDows = /* undefined; */ {
+        windowMs: 1000,//3 * 60 * 1000, // 15 minutes
+        delayAfter: 1000, // allow 100 requests per 15 minutes, then...
+        delayMs: 5000, // begin adding 500ms of delay per request above 100:
+        maxDelayMs: 6000,
         onLimitReached: (req: Request, res: Response, options: OptSlowDows) => {
             res.status(555).send("rate_limit : onLimitReached")
             throw new Error("Errore: rate_limit : onLimitReached");
         }
-    }; */
-    rate_limit?: OptRateLimit = undefined/* {
-        windowMs: 3 * 60 * 1000, // 15 minutes
-        max: 100,
-        onLimitReached: (req: Request, res: Response, options: OptRateLimit) => {
+    };
+    rate_limit?: Partial<OptRateLimit> =/*  undefined */{
+        windowMs: 500,//3 * 60 * 1000, // 15 minutes
+        max: 1000,
+        onLimitReached: (req: Request, res: Response, options: Partial<OptRateLimit>) => {
             res.status(555).send("rate_limit : onLimitReached")
             throw new Error("Errroe: rate_limit : onLimitReached");
         }
-    }; */
+    };
     cors = cors();
     helmet = helmet();
-    middleware = [];
+    middleware: any[] = [];
     //cacheOptionRedis: OptionsCache;
     cacheOptionMemory?: { durationSecondi: number } = undefined;//= { durationSecondi: 1 };
-    Init(item: IMetodoLimitazioni) {
+    Init(item: IMetodoLimitazioni) { 
         if (item.slow_down) this.slow_down = item.slow_down;
         if (item.rate_limit) this.rate_limit = item.rate_limit;
+        if (item.middleware) this.middleware = item.middleware;
         if (item.cacheOptionMemory) this.cacheOptionMemory = item.cacheOptionMemory;
-        if (item.isSpawTrigger) this.isSpawTrigger = item.isSpawTrigger;
     }
-
-    VerificaPresenzaSpawnTrigger(res: IReturn) {
-        if (res.body instanceof Object && this.isSpawTrigger) {
-            if (this.isSpawTrigger in res.body) {
-                return true;
-            }
-        }
-
-        /*  for (let index = 0; index < Main.vettoreProcessi.length; index++) {
-             const element = Main.vettoreProcessi[index];
-             if(element.nomeVariabile)
-         } */
-        return false;
-    }
+    
     PrintStruttura(): string {
-        let ritorno = '';
-        if (this.isSpawTrigger) ritorno = ritorno + '\nisSpawTrigger :' + this.isSpawTrigger;
-        if (this.checkSpawTrigger) ritorno = ritorno + '\ncacheOptionMemory :' + JSON.stringify(this.cacheOptionMemory);
+        let ritorno = ''; 
         if (this.slow_down) ritorno = ritorno + '\nslow_down :' + JSON.stringify(this.slow_down);
         if (this.rate_limit) ritorno = ritorno + '\nrate_limit :' + JSON.stringify(this.rate_limit);
         if (this.cors) ritorno = ritorno + '\ncors :' + JSON.stringify(this.cors);

@@ -14,10 +14,15 @@ export interface IMetaParametroBesa {
 }
 
 export interface IMetaParametro extends IMeta {
+    /** tipo di dato da trattare valore, da ricordarsi che vi sara il controllo sul tipo con le modalita classiche di comparazione base gia presenti in js */
     tipo?: tipo;
+    /** parametro che rappresenta la sua posizione, viene impostato automaticamente, è coninvolto nel nome del parametro nella rotta */
     indexParameter?: number;
+    /** fondamentalmente è rappresentativo del parametro e sara poi messo in documentazione,, questo sara il commento lungo presente nella descrizione. */
     descrizione?: string;
+    /** altro compo che sara poi utile nella creazione della documentazione, questo sara il commento breve presente in intestazione*/
     sommario?: string;
+    /**parametro che determina se obbligare la sua presenza, puo far terminare la chiamata con codice differenti da quelli previsti. */
     obbligatorio?: boolean;
 
     /*  parametroExpress?: ExpressParametro; */

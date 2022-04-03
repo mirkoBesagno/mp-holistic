@@ -25,3 +25,7 @@
     npm i @types/tryer,
     npm i extra-boolean,
     npm i is-do-and-have
+
+    
+    "prompts": "^2.4.2",
+    "@types/prompts": "^2.0.14",

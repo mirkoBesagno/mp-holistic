@@ -1,5 +1,5 @@
 import { IMetaProprieta, ListaMetadataProprieta, MetadataProprieta } from "../metadata/proprieta.metadata";
-import { ORMObject, tipo } from "../utility";
+import { ORMObject, tipo, VerificaGenerica } from "../utility";
 import { ListaPostgresClasse } from "./classe.postgres";
 import { Constraint, IConstraints } from "./constraint";
 import { IGrant } from "./grant";
@@ -80,45 +80,18 @@ export class PostgresProprieta extends MetadataProprieta implements IPostgresPro
 
     Verifica(): boolean {
         try {
-            switch (this.tipo) {
-                case 'array':
-                    this.valore = Array(this.valore);
-                    break;
-                case 'boolean':
-                    this.valore = Boolean(this.valore);
-                    break;
-                case 'date':
-                case 'timestamptz':
-                    this.valore = new Date(this.valore);
-                    break;
-                case 'decimal':
-                case 'smallint':
-                case 'integer':
-                case 'numeric':
-                case 'real':
-                case 'smallserial':
-                case 'serial':
-                    this.valore = Number(this.valore);
-                    break;
-                case 'object':
-                    this.valore = Object(this.valore);
-                    break;
-                case 'text':
-                case 'varchar(n)':
-                case 'character(n)':
-                    this.valore = String(this.valore);
-                    break;
-                case 'any': break;
-                default:
-                    return false;
+            if (VerificaGenerica(this.tipo, this.valore)) {
+                return true;
             }
-            return true;
+            else {
+                return false;
+            }
         } catch (error) {
             console.log('ciao');
             throw error;
         }
     }
-    static Verifica(tipo: tipo, valore: any): boolean {
+    /* static Verifica(tipo: tipo, valore: any): boolean {
         try {
             switch (tipo) {
                 case 'array':
@@ -156,7 +129,7 @@ export class PostgresProprieta extends MetadataProprieta implements IPostgresPro
         } catch (error) {
             return false;
         }
-    }
+    } */
     AppoggioCostruzioneStringa(item: tipo) {
         let tmpRitorno = '';
         switch (item) {
@@ -267,7 +240,7 @@ export class PostgresProprieta extends MetadataProprieta implements IPostgresPro
             }
         }
     }
-    
+
 }
 
 

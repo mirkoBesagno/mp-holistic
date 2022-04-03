@@ -76,7 +76,7 @@ export type DecoratoreMetodoLista = {
 };
 
 export type TypeDecoratoreClasse = {
-    itemMetaClasse: IMetaClasse,
+    itemMetaClasse?: IMetaClasse,
     itemExpressClasse?: IExpressClasse,
     itemPostgresClasse?: IPostgresClasse,
     itemListaMetodi?: DecoratoreMetodoLista[]
@@ -93,49 +93,54 @@ export function decoratoreClasse(item?: TypeDecoratoreClasse): any {
     }
 }
 export function DecoratoreClasse(ctr: any, item?: TypeDecoratoreClasse) {
-    if (item) {
-        if (item.itemListaMetodi) {
-            for (let index = 0; index < item.itemListaMetodi.length; index++) {
-                try {
-                    const element = item.itemListaMetodi[index];
-                    const funzione = ctr.prototype[element.nomeMetodo];
-                    const target = {
-                        constructor: {
-                            name: item.itemMetaClasse.nomeOriginale != undefined ? item.itemMetaClasse.nomeOriginale : ctr.name
+    try {
+        if (item) {
+            if (item.itemListaMetodi) {
+                for (let index = 0; index < item.itemListaMetodi.length; index++) {
+                    try {
+                        const element = item.itemListaMetodi[index];
+                        const funzione = ctr.prototype[element.nomeMetodo];
+                        const target = {
+                            constructor: {
+                                name: (item.itemMetaClasse && item.itemMetaClasse.nomeOriginale != undefined) ? item.itemMetaClasse.nomeOriginale : ctr.name
+                            }
                         }
+                        DecoratoreMetodo(target, element.nomeMetodo, funzione, element.decoratore);
+                    } catch (error) {
+                        console.log(error);
                     }
-                    DecoratoreMetodo(target, element.nomeMetodo, funzione, element.decoratore);
-                } catch (error) {
-                    console.log(error);
+                }
+            }
+            if (item.itemMetaClasse) {
+                const list: ListaMetadataClasse = GetListaClasseMeta<ListaMetadataClasse>('nomeMetadataKeyTargetFor_Metadata', () => { return new ListaMetadataClasse(); });
+                item.itemMetaClasse.nomeOriginale = item.itemMetaClasse.nomeOriginale != undefined ? item.itemMetaClasse.nomeOriginale : ctr.name;
+                const t = new MetadataClasse(item.itemMetaClasse);
+                list.CercaSeNoAggiungi(t);
+                SalvaListaMetaClasse('nomeMetadataKeyTargetFor_Metadata', list);
+            }
+            if (item.itemExpressClasse) {
+                if (item.itemExpressClasse) {
+                    if (item.itemExpressClasse.listaMetodi == undefined) { item.itemExpressClasse.listaMetodi = new ListaMetadataMetodo(item.itemExpressClasse.listaMetodi) }
+                    const listExpress: ListaExpressClasse = GetListaClasseMeta<ListaExpressClasse>('nomeMetadataKeyTargetFor_Express', () => { return new ListaExpressClasse(); });
+                    item.itemExpressClasse.nomeOriginale = ctr.name;
+                    const t = new ExpressClasse(item.itemExpressClasse);
+                    listExpress.CercaSeNoAggiungi(t);
+                    SalvaListaMetaClasse('nomeMetadataKeyTargetFor_Express', listExpress);
+                }
+            }
+            if (item.itemPostgresClasse) {
+                if (item.itemPostgresClasse) {
+                    if (item.itemPostgresClasse.listaMetodi == undefined) { item.itemPostgresClasse.listaMetodi = new ListaMetadataMetodo(item.itemPostgresClasse.listaMetodi) }
+                    const listaPostgres: ListaPostgresClasse = GetListaClasseMeta<ListaPostgresClasse>('nomeMetadataKeyTargetFor_Postgres', () => { return new ListaPostgresClasse(); });
+                    item.itemPostgresClasse.nomeOriginale = ctr.name;
+                    const t = new PostgresClasse(item.itemPostgresClasse);
+                    listaPostgres.CercaSeNoAggiungi(t);
+                    SalvaListaMetaClasse('nomeMetadataKeyTargetFor_Postgres', listaPostgres);
                 }
             }
         }
-        if (item.itemMetaClasse) {
-            const list: ListaMetadataClasse = GetListaClasseMeta<ListaMetadataClasse>('nomeMetadataKeyTargetFor_Metadata', () => { return new ListaMetadataClasse(); });
-            item.itemMetaClasse.nomeOriginale = item.itemMetaClasse.nomeOriginale != undefined ? item.itemMetaClasse.nomeOriginale : ctr.name;
-            const t = new MetadataClasse(item.itemMetaClasse);
-            list.CercaSeNoAggiungi(t);
-            SalvaListaMetaClasse('nomeMetadataKeyTargetFor_Metadata', list);
-        }
-        if (item.itemExpressClasse) {
-            if (item.itemExpressClasse) {
-                if (item.itemExpressClasse.listaMetodi == undefined) { item.itemExpressClasse.listaMetodi = new ListaMetadataMetodo(item.itemExpressClasse.listaMetodi) }
-                const listExpress: ListaExpressClasse = GetListaClasseMeta<ListaExpressClasse>('nomeMetadataKeyTargetFor_Express', () => { return new ListaExpressClasse(); });
-                item.itemExpressClasse.nomeOriginale = ctr.name;
-                const t = new ExpressClasse(item.itemExpressClasse);
-                listExpress.CercaSeNoAggiungi(t);
-                SalvaListaMetaClasse('nomeMetadataKeyTargetFor_Express', listExpress);
-            }
-        }
-        if (item.itemPostgresClasse) {
-            if (item.itemPostgresClasse) {
-                if (item.itemPostgresClasse.listaMetodi == undefined) { item.itemPostgresClasse.listaMetodi = new ListaMetadataMetodo(item.itemPostgresClasse.listaMetodi) }
-                const listaPostgres: ListaPostgresClasse = GetListaClasseMeta<ListaPostgresClasse>('nomeMetadataKeyTargetFor_Postgres', () => { return new ListaPostgresClasse(); });
-                item.itemPostgresClasse.nomeOriginale = ctr.name;
-                const t = new PostgresClasse(item.itemPostgresClasse);
-                listaPostgres.CercaSeNoAggiungi(t);
-                SalvaListaMetaClasse('nomeMetadataKeyTargetFor_Postgres', listaPostgres);
-            }
-        }
+    } catch (error) {
+        console.log(error);
+        throw error;
     }
 }

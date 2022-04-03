@@ -6,6 +6,8 @@ import { ICache } from "../../main/main";
 import { SanificatoreCampo } from "./SanificatoreCampo";
 import { ErroreMio } from "./ErroreMio";
 import { MainExpress } from "../main.express";
+import { ITracciamentoQualita } from "../metodo.express";
+import fs from "fs";
 
 export type TypePosizione = "body" | "query" | 'header';
 
@@ -20,7 +22,6 @@ export type TypeInterazone = "rotta" | "middleware" | 'ambo';
     stato?: number,
     terminale?: IExpressParametro
 } */
-
 
 export interface IResponse {
     body: string
@@ -110,7 +111,7 @@ export function SostituisciRicorsivo(sanific: SanificatoreCampo[], currentNode: 
  * @nomeFunzione inserire solo se si alla creazione ovvero nel throw new ErroreMio(....)
  * @percorsoErrore campo gestito dala classe GestioneErrore, se proprio si vuole inserire solo se si è nella fase di rilancio di un errore
  */
- export interface IErroreMio {
+export interface IErroreMio {
     messaggio: string,
     codiceErrore: number,
     nomeClasse?: string,
@@ -141,7 +142,7 @@ export function GestioneErrore(item: IGestioneErrore): ErroreMio {
 }
 
 
-export function CalcolaChiaveMemoryCache(req: Request):string {
+export function CalcolaChiaveMemoryCache(req: Request): string {
     const keySHA = 'Besagno'
     const headerTmp = req.headers['authorization'] != undefined ? String(req.headers['authorization']) : JSON.stringify({
         "Aauthorization9X": "10"
@@ -200,13 +201,89 @@ export function InizializzaLogbaseIn(req: Request, nomeMetodo?: string): ILogbas
     return tmp;
 }
 
-export function Rispondi(res: Response, item: IReturn, key?: string, durationSecondi?: number /* , url: string */) {
+export function Rispondi(res: Response, item: IReturn, id: ITracciamentoQualita, key?: string, durationSecondi?: number /* , url: string */) {
 
     res.statusCode = Number.parseInt('' + item.stato);
     res.send(item.body);
+    id.fine = new Date().getTime();
+    id.differenza = id.fine - id.inizio;
+
+    if (id && 'res' in id && res) {
+        id.res = res;
+    }
+    var cache: any = [];
+    let tmpReq = '';
+    let tmpRes = '';
+    try {
+        tmpReq = //id.req ?? '';
+            JSON.stringify(id.req, (key, value) => {
+                if (typeof value === 'object' && value !== null && cache) {
+                    // Duplicate reference found, discard key
+                    if (cache.includes(value)) return;
+
+                    // Store value in our collection
+                    cache.push(value);
+                }
+                return value;
+            });
+        cache = undefined;
+        //(JSON.stringify(id.req, null, 0));
+        /* stringifyObject(id.req, {
+            indent: '  ',
+            singleQuotes: false
+        }); */
+    } catch (error) {
+        tmpReq = 'errore : ' + error;
+    }
+    try {
+        tmpRes = //id.res ?? '';
+            JSON.stringify(id.req, (key, value) => {
+                if (typeof value === 'object' && value !== null && cache) {
+                    // Duplicate reference found, discard key
+                    if (cache.includes(value)) return;
+
+                    // Store value in our collection
+                    cache.push(value);
+                }
+                return value;
+            });
+        cache = undefined;
+        //JSON.stringify(id.res, null, 0);
+        /* stringifyObject(id.res, {
+            indent: '  ',
+            singleQuotes: false
+        }); */
+    } catch (error) {
+        tmpRes = 'error : ' + error;
+    }
+    const stamp = `
+    <!--################
+    processo:${MainExpress.portaProcesso}
+    id:${id.id};
+    inizio:${new Date(id.inizio).toISOString()};
+    inizio-time: ${id.inizio}
+    tempo:${id.differenza};
+    req:
+    ${tmpReq}
+    res:
+    ${tmpRes}
+    ################--!>
+    `;
+    console.log(stamp);
+    //fs.writeFileSync('./LogExpress/Processo_' + MainExpress.portaProcesso + '/' + 'log.txt', stamp,);
+    /* var logger = fs.createWriteStream('./LogExpress/Processo_' + MainExpress.portaProcesso + '/' + 'log.txt', {
+        flags: 'a'
+    });
+    logger.write(stamp); */
+    try {
+        fs.appendFileSync('./LogExpress/Processo_' + MainExpress.portaProcesso + '/' + 'log.txt', stamp);
+    } catch (error) {
+        console.log(error);
+    }
+
     if (key != undefined) {
         const tempo = (durationSecondi ?? 1);
-        MainExpress.cache.set<ICache>(key, <ICache>{ body: item.body, stato: res.statusCode }, tempo /* * 1000 */);
+        MainExpress.cache.set<ICache>(key, <ICache>{ body: item.body, stato: res.statusCode }, tempo /* 1000 */);
     }
 }
 

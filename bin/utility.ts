@@ -50,8 +50,7 @@ export type tipo = /* "number" | */
     "boolean" |
     "any" |
     //"object" 
-    ORMObject
-    ;
+    ORMObject;
 
 export class ORMObject {
     tipo: 'object';
@@ -79,6 +78,7 @@ export const targetTerminale = { name: 'Terminale' };
 export const targetExpress = { name: 'ExpressS' };
 
 import os from "os";
+import valid from "validator";
 
 export function StartMonitoring() {
     try {
@@ -133,5 +133,59 @@ export function StartMonitoring() {
         setTimeout(() => {
             StartMonitoring();
         }, (5) * 1000);
+    }
+}
+export function GenerateID() {
+    return `==${(Math.random() * 100).toFixed(0)}::${(Math.random() * 1000).toFixed(0)}::${new Date().getTime()}==`;
+}
+export function VerificaGenerica(tipo: tipo, valore: any): boolean {
+    try {
+        let risultato: boolean = false;
+        switch (tipo) {
+            case 'array':
+                Array(valore);
+                risultato = true;
+                //risultato = valid.is(valore);
+                break;
+            case 'boolean':
+                //Boolean(valore);
+                risultato = valid.isBoolean(valore);
+                break;
+            case 'date':
+            case 'timestamptz':
+                //new Date(valore);
+                risultato = valid.isDate(valore);
+                break;
+            case 'decimal':
+            case 'smallint':
+            case 'integer':
+            case 'numeric':
+            case 'real':
+            case 'smallserial':
+            case 'serial':
+                //Number(valore);
+                risultato = valid.isNumeric(valore);
+                break;
+            case 'object':
+                Object(valore);
+                risultato = true;
+                //risultato = valid.isO(valore);
+                break;
+            case 'text':
+            case 'varchar(n)':
+            case 'character(n)':
+                //String(valore);
+                risultato = valid.isAscii(valore);
+                break;
+            case 'any':
+                risultato = valore;
+                 break;
+            default:
+                break;
+        }
+        if (risultato) return true;
+        else return false;
+    } catch (error) {
+        return false;
     }
 }

@@ -31,7 +31,8 @@ export class MainExpress {
         vettorePossibiliPosizioni: ISpawTrigger[],
         processo: any
     }[] = [];
-    static pathExe = './dist/index-esempio.js --porta=';
+    static pathExe = 'dist/index.js';
+    static pathExeIIparte = ' --porta=';
     static isSottoProcesso = false;
 
     /* isMultiProcesso = false; */
@@ -64,6 +65,7 @@ export class MainExpress {
                     console.log(process.argv[2]);
                     const substr = String(process.argv[2]).substring(8, undefined);
                     porta = Number(substr);
+                    MainExpress.portaProcesso = porta;
                     sottoprosotto = true;
                 } catch (error) {
                     console.log(error);
@@ -88,9 +90,8 @@ export class MainExpress {
         const isSottoprocesso = this.DeterminaIfIsSottoProcesso();
         sottoprocesso = isSottoprocesso.sottoprosotto;
         porta = isSottoprocesso.porta ?? porta;
-        //const tmp: ListaTerminaleClasse = Reflect.getMetadata(ListaTerminaleClasse.nomeMetadataKeyTarget, targetTerminale);
         if (sottoprocesso) MainExpress.isSottoProcesso = sottoprocesso
-        const tmp: ListaExpressClasse = GetListaClasseMeta<ListaExpressClasse>('nomeMetadataKeyTargetFor_Express');
+        const tmp: ListaExpressClasse = GetListaClasseMeta<ListaExpressClasse>('nomeMetadataKeyTargetFor_Express', () => { return new ListaExpressClasse(); });
         console.log('');
         if (tmp.length > 0) {
             this.percorsi.patheader = patheader;
@@ -115,67 +116,15 @@ export class MainExpress {
         else {
             console.log("Attenzione non vi sono rotte e quantaltro.");
         }
-
-        //const list = GetListaClasseMetaData();
-        console.log('');
     }
 
     ScriviFile(pathDoveScrivereFile: string): string {
-        const tmp = GetListaClasseMeta<ListaExpressClasse>('nomeMetadataKeyTargetFor_Express');
+        const tmp = GetListaClasseMeta<ListaExpressClasse>('nomeMetadataKeyTargetFor_Express', () => { return new ListaExpressClasse(); });
 
         fs.rmdirSync(pathDoveScrivereFile + '/FileGenerati_MP', { recursive: true });
         fs.mkdirSync(pathDoveScrivereFile + '/FileGenerati_MP', { recursive: true });
 
         let ritorno = '';
-        /* try {
-            let swaggerClassePath = '';
-            for (let index = 0; index < tmp.length; index++) {
-                const element = tmp[index];
-                const tmp = element.SettaSwagger();
-                if (index > 0 && tmp != undefined && tmp != undefined && tmp != '')
-                    swaggerClassePath = swaggerClassePath + ', ';
-                if (tmp != undefined && tmp != undefined && tmp != '')
-                    swaggerClassePath = swaggerClassePath + tmp;
-            }
-            ritorno = ` {
-            "openapi": "3.0.0",
-            "servers": [
-                {
-                    "url": "https://staisicuro.medicaltech.it/",
-                    "variables": {},
-                    "description": "indirizzo principale"
-                },
-                {
-                    "url": "http://ss-test.medicaltech.it/",
-                    "description": "indirizzo secondario nel caso quello principale non dovesse funzionare."
-                }
-            ],
-            "info": {
-                "description": "Documentazione delle API con le quali interrogare il server dell'applicazione STAI sicuro, per il momento qui troverai solo le api con le quali interfacciarti alla parte relativa al paziente.Se vi sono problemi sollevare degli issues o problemi sulla pagina di github oppure scrivere direttamente una email.",
-                "version": "1.0.0",
-                "title": "STAI sicuro",
-                "termsOfService": "https://github.com/MedicaltechTM/STAI_sicuro"
-            },
-            "tags": [],
-            "paths": {
-                ${swaggerClassePath}
-            },
-            "externalDocs": {
-                "description": "Per il momento non vi sono documentazione esterne.",
-                "url": "-"
-            },
-            "components": {
-                "schemas": {},
-                "securitySchemes": {},
-                "links": {},
-                "callbacks": {}                
-            },
-            "security": []
-        }`;
-        } catch (error) {
-            return ritorno;
-        }
-        fs.writeFileSync(pathDoveScrivereFile + '/FileGenerati_MP' + '/swagger', ritorno); */
 
         try {
             for (let index = 0; index < tmp.length; index++) {
@@ -212,7 +161,33 @@ export class MainExpress {
         ritorno = '';
         return ritorno;
     }
+    InizializzaCartellaFileLogProxy() {
+        try {
+            /**log proxy */
+            if (!fs.existsSync('./LogExpress/LogProxy_' + MainExpress.portaProcesso)) {
+                fs.mkdirSync('./LogExpress/LogProxy_' + MainExpress.portaProcesso, { recursive: true });
+            }
+            fs.writeFileSync('./LogExpress/LogProxy_' + MainExpress.portaProcesso + '/log.txt', '');
+        } catch (error) {
+            console.log(error);
+        }
+    }
+    InizializzaCartelleFileLogExpress() {
+        try {
+            /**log processi express */
+            if (!fs.existsSync('./LogExpress')) {
+                fs.mkdirSync('./LogExpress', { recursive: true });
+            }
+            if (!fs.existsSync('./LogExpress/Processo_' + MainExpress.portaProcesso)) {
+                fs.mkdirSync('./LogExpress/Processo_' + MainExpress.portaProcesso, { recursive: true });
+            }
+            fs.writeFileSync('./LogExpress/Processo_' + MainExpress.portaProcesso + '/log.txt', '');
+        } catch (error) {
+            console.log(error);
+        }
+    }
     StartHttpServer(): void {
+        this.InizializzaCartelleFileLogExpress();
         try {
             if (MainExpress.vettoreProcessi.length > 0) {
                 /* qui non arrivero mai! Perche il processo che viene avviato è un processo figlio, 
@@ -240,6 +215,12 @@ export class MainExpress {
                 if (MainExpress.isSottoProcesso == true) {
                     this.httpServer.listen(this.percorsi.porta);
                 } else {
+                    this.InizializzaCartellaFileLogProxy();
+                    if (!fs.existsSync('./LogExpress/LogProxy_' + MainExpress.portaProcesso)) {
+                        fs.mkdirSync('./LogExpress/LogProxy_' + MainExpress.portaProcesso, { recursive: true });
+                    }
+                    fs.writeFileSync('./LogExpress/LogProxy_' + MainExpress.portaProcesso + '/log.txt', '');
+
                     MainExpress.portaProxy = this.percorsi.porta;
                     MainExpress.portaProcesso = this.percorsi.porta + 1;
                     this.httpServer.listen(MainExpress.portaProcesso);
@@ -253,43 +234,42 @@ export class MainExpress {
                         // and then proxy the request.
                         // const variabileValore = '1';
                         let esco = false;
+                        let stamp = '';
                         for (let index = 0; index < MainExpress.vettoreProcessi.length && esco == false; index++) {
                             const processo = MainExpress.vettoreProcessi[index];
 
                             processo.vettorePossibiliPosizioni;
-                            /*  */
                             //devo estrarre il dato per poterlo verificare con la variabile
-                            let ritorno: string | string[] | undefined = undefined;
-
                             for (let index = 0; index < processo.vettorePossibiliPosizioni.length && esco == false; index++) {
                                 const element = processo.vettorePossibiliPosizioni[index];
-                                /* if (richiesta..body[element.nome] != undefined && element.posizione == 'body') {
-                                    tmp = richiesta.body[element.nome];
-                                }
-                                else if (richiesta.query[element.nome] != undefined && element.posizione == 'query') {
-                                    tmp = richiesta.query[element.nome];
-                                }
-                                else */ if (req.headers[element.nome] != undefined && element.posizione == 'header') {
-                                    ritorno = req.headers[element.nome];
+                                /** si cerca solo nell'header perche siamo nel proxy, questo puo solo maneggiare l'header per semplicita e velocita */
+                                if (req.headers[element.nome] != undefined && element.posizione == 'header') {
                                     if (processo.valoreValiabile == req.headers[element.nome]) {
                                         res.setHeader("proxy", "->http://localhost:" + processo.porta);
                                         proxy.web(req, res, { target: 'http://localhost:' + processo.porta });
+                                        stamp = `
+                                        <!--################
+                                        proxy->http://localhost: ${processo.porta}                                        
+                                        ################--!>
+                                        `;
                                         esco = true;
                                     }
                                 }
                             }
-                            console.log(ritorno);
-                            /*  */
-
-                            /* if (element.valoreValiabile == variabileValore) {
-                                res.setHeader("proxy", "->http://localhost:" + element.porta);
-                                proxy.web(req, res, { target: 'http://localhost:' + element.porta });
-                                esco = true;
-                            } */
                         }
                         if (esco == false) {
                             res.setHeader("proxy", "->http://localhost:" + MainExpress.portaProcesso);
                             proxy.web(req, res, { target: 'http://localhost:' + MainExpress.portaProcesso });
+                            stamp = `
+                            <!--################
+                            proxy->http://localhost: ${MainExpress.portaProcesso}   
+                            ################--!>
+                            `;
+                        }
+                        try {
+                            fs.appendFileSync('./LogExpress/LogProxy_' + MainExpress.portaProcesso + '/' + 'log.txt', stamp);
+                        } catch (error) {
+                            console.log(error);
                         }
                     });
                     MainExpress.proxyServer.listen(MainExpress.portaProxy);

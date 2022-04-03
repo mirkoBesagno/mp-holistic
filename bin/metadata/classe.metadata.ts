@@ -12,7 +12,13 @@ export interface IMetaClasseBase {
     nomeVariante?: string;
     listaMetodi?: ListaMetadataMetodo;
 }
-
+/**
+ * istanzia la meta classe
+ * @param nomeOriginale : si puo tralasciare
+ * @param nomeVariante : si puo tralasciare
+ * @param listaMetodi : da toccare con cura
+ * @param listaProprieta : da toccare con cura
+ */
 export interface IMetaClasse extends IMeta {
     nomeOriginale?: string;
     nomeVariante?: string;

@@ -8,7 +8,9 @@ export interface IIntegraMeta {
 }
 
 export interface IMeta {
+    /** nome originale, non si dovrebbe mai configurare, fare con cura*/
     nomeOriginale?: string;
+    /** questo parametro è fondamentalmente configurabile, si consiglia pero di farlo concidere con quello del nome originale. da maneggiare con cura*/
     nomeVariante?: string;
 }
 export interface ICompare {
@@ -172,10 +174,15 @@ export function GetListaClasseMeta<T>(metaKey: metadataKey, ifNonEsiste?: () => 
     let tmp: T | undefined = undefined;
     tmp = Reflect.getMetadata(metaKey, targetTerminale);
     if (tmp == undefined) {
-        if (ifNonEsiste)
+        if (ifNonEsiste) {
             tmp = ifNonEsiste();
+        }
+        else {
+        }
     }
-    if (tmp == undefined) throw new Error('Boooo');
+    if (tmp == undefined) {
+        throw new Error('Boooo');
+    }
     return <T>tmp;
 }
 export function SalvaListaMetaClasse(metaKey: metadataKey, item: ListaMeta) {
