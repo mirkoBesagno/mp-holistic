@@ -216,10 +216,10 @@ export class MainExpress {
                     this.httpServer.listen(this.percorsi.porta);
                 } else {
                     this.InizializzaCartellaFileLogProxy();
-                    if (!fs.existsSync('./LogExpress/LogProxy_' + MainExpress.portaProcesso)) {
-                        fs.mkdirSync('./LogExpress/LogProxy_' + MainExpress.portaProcesso, { recursive: true });
+                    if (!fs.existsSync('./LogExpress/LogProxy_' + MainExpress.portaProxy)) {
+                        fs.mkdirSync('./LogExpress/LogProxy_' + MainExpress.portaProxy, { recursive: true });
                     }
-                    fs.writeFileSync('./LogExpress/LogProxy_' + MainExpress.portaProcesso + '/log.txt', '');
+                    fs.writeFileSync('./LogExpress/LogProxy_' + MainExpress.portaProxy + '/log.txt', '');
 
                     MainExpress.portaProxy = this.percorsi.porta;
                     MainExpress.portaProcesso = this.percorsi.porta + 1;
