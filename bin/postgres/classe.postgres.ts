@@ -323,7 +323,7 @@ export function CreateDataBase(nomeDB: string) {
     return `CREATE DATABASE ${nomeDB};`;
 }
 export function DropDataBase(nomeDB: string) {
-    return `DROP DATABASE IF EXISTS ${nomeDB};`;
+    return `DROP DATABASE IF EXISTS "${nomeDB}";`;
 }
 export function DropAllTable() {
     return `DROP SCHEMA public CASCADE;

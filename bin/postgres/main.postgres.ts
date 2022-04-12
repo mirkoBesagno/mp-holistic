@@ -62,46 +62,49 @@ export class MainPostgres {
     constructor() {
         this.listaRuoli = [];
         this.listaUser = [];
-        this.listaClassi = GetListaClasseMeta<ListaPostgresClasse>('nomeMetadataKeyTargetFor_Postgres', () => { return new ListaPostgresClasse();});
+        this.listaClassi = GetListaClasseMeta<ListaPostgresClasse>('nomeMetadataKeyTargetFor_Postgres', () => { return new ListaPostgresClasse(); });
     }
 
-    InizializzaORM(): string {
-        const ritorno = '';
+    InizializzaORM(listaRuoli?:Role[], listaUser?:User[]): string {
+        try {
 
-        this.elencoQuery.push(`CREATE EXTENSION plv8;`);
+            const ritorno = '';
 
-        this.elencoQuery.push(DropAllTable());
+            this.elencoQuery.push(`CREATE EXTENSION plv8;`);
 
-        this.elencoQuery.push(TriggerUpdate_updated_at_column());
-        this.InizializzaRuoli(this.elencoQuery, this.listaRuoli);
-        this.InizializzaUser(this.elencoQuery, this.listaUser);
-        /*  */
-        for (const element of this.listaClassi) {
-            (<PostgresClasse>element).CostruisciCreazioneDB(this.elencoQuery, true);
-        }
-        /* for (const element of this.listaClassi) {
-            (<PostgresClasse>element).CostruisciCreazioneDB(this.elencoQuery, false);
-        } */
-        for (const element of this.listaClassi) {
-            (<PostgresClasse>element).CostruisciRelazioniDB(this.elencoQuery);
-        }
-        for (const element of this.listaClassi) {
-            (<PostgresClasse>element).CostruisceGrant((<PostgresClasse>element).grants ?? [], this.elencoQuery);
-        }
-        for (const element of this.listaClassi) {
-            if ((<PostgresClasse>element).listaPolicy) {
-                ((<PostgresClasse>element).listaPolicy ?? new ListaPolicy()).CostruiscePolicySicurezza(this.elencoQuery);
+            this.elencoQuery.push(DropAllTable());
+
+            this.elencoQuery.push(TriggerUpdate_updated_at_column());
+            this.InizializzaRuoli(this.elencoQuery, listaRuoli ?? []);
+            this.InizializzaUser(this.elencoQuery, listaUser ?? []);
+            /*  */
+            for (const element of this.listaClassi) {
+                (<PostgresClasse>element).CostruisciCreazioneDB(this.elencoQuery, true);
             }
+            /* for (const element of this.listaClassi) {
+                (<PostgresClasse>element).CostruisciCreazioneDB(this.elencoQuery, false);
+            } */
+            for (const element of this.listaClassi) {
+                (<PostgresClasse>element).CostruisciRelazioniDB(this.elencoQuery);
+            }
+            for (const element of this.listaClassi) {
+                (<PostgresClasse>element).CostruisceGrant((<PostgresClasse>element).grants ?? [], this.elencoQuery);
+            }
+            for (const element of this.listaClassi) {
+                if ((<PostgresClasse>element).listaPolicy) {
+                    ((<PostgresClasse>element).listaPolicy ?? new ListaPolicy()).CostruiscePolicySicurezza(this.elencoQuery);
+                }
+            }
+            this.InizializzaRuoliGrantGenerale(this.elencoQuery, this.listaRuoli);
+            this.InizializzaUserGrantGenerale(this.elencoQuery, this.listaUser);
+            return ritorno;
+        } catch (error) {
+            throw error;
         }
-        this.InizializzaRuoliGrantGenerale(this.elencoQuery, this.listaRuoli);
-        this.InizializzaUserGrantGenerale(this.elencoQuery, this.listaUser);
-        return ritorno;
     }
     async IstanziaORM(client: Client) {
         try {
-
             await client.connect();
-
 
             //console.log('\n!!!!!!?????######\n\n\n\n' + orm + '\n\n\n\n\n\n!!!!!!?????######\n');
 
@@ -158,7 +161,7 @@ export class MainPostgres {
             console.log(error);
         }
     }
-    async IstanziaTutto(client: Client){
+    async IstanziaTutto(client: Client) {
         this.InizializzaORM();
         await this.IstanziaORM(client);
     }
@@ -171,7 +174,7 @@ export class MainPostgres {
         if (listaRuoli) {
             for (let index = 0; index < listaRuoli.length; index++) {
                 const element = listaRuoli[index];
-                const faxs = `CREATE ROLE ${element.nome} WITH 
+                const faxs = `CREATE ROLE "${element.nome}" WITH 
                 ${element.option.isSuperUser != undefined && element.option.isSuperUser == true ? 'SUPERUSER' : 'NOSUPERUSER'} 
                 ${element.option.creaDB != undefined && element.option.creaDB == true ? 'CREATEDB' : 'NOCREATEDB'}
                 ${element.option.creaUser != undefined && element.option.creaUser == true ? 'CREATEROLE' : 'NOCREATEROLE'} 
@@ -182,7 +185,7 @@ export class MainPostgres {
                 ENCRYPTED PASSWORD '${element.password}' 
                 ${element.option.connectionLimit != undefined ? 'CONNECTION LIMIT ' + element.option.connectionLimit : ''} 
                 ; \n`;
-                const faxsDrop = `DROP ROLE IF EXISTS ${element.nome};`;
+                const faxsDrop = `DROP ROLE IF EXISTS "${element.nome}";`;
                 elencoQuery.push(faxsDrop);
                 elencoQuery.push(faxs);
                 ritornoTmp = faxs;
@@ -215,7 +218,7 @@ export class MainPostgres {
             for (let index = 0; index < listaUser.length; index++) {
                 const element = listaUser[index];
                 const costruisciRuoli = this.CostruisciRuoli(element.inRole);
-                const faxs = `CREATE USER ${element.nome} WITH 
+                const faxs = `CREATE USER "${element.nome}" WITH 
                 ${element.option.isSuperUser != undefined && element.option.isSuperUser == true ? 'SUPERUSER' : 'NOSUPERUSER'} 
                 ${element.option.creaDB != undefined && element.option.creaDB == true ? 'CREATEDB' : 'NOCREATEDB'}
                 ${element.option.creaUser != undefined && element.option.creaUser == true ? 'CREATEROLE' : 'NOCREATEROLE'} 
@@ -228,7 +231,7 @@ export class MainPostgres {
                 IN ROLE ${costruisciRuoli}
                 ; \n`;
 
-                const faxsDrop = `DROP USER IF EXISTS ${element.nome};`;
+                const faxsDrop = `DROP USER IF EXISTS "${element.nome}";`;
                 elencoQuery.push(faxsDrop);
                 elencoQuery.push(faxs);
                 this.listaUser.push(element);
