@@ -201,11 +201,11 @@ export class MainPostgres {
                 const element = listaRuoli[index];
                 const faxSchema = `GRANT USAGE
                 ON ALL SEQUENCES IN SCHEMA public
-                TO ${element.nome} ;`;
+                TO "${element.nome}";`;
                 elencoQuery.push(faxSchema);
                 const faxFunction = `GRANT EXECUTE
                 ON ALL functions IN SCHEMA public
-                    TO ${element.nome};`;
+                    TO "${element.nome}";`;
                 elencoQuery.push(faxFunction);
                 ritornoTmp = faxSchema;
             }
@@ -249,11 +249,11 @@ export class MainPostgres {
 
                 const faxSchema = `GRANT USAGE
                 ON ALL SEQUENCES IN SCHEMA public
-                TO ${element.nome} ;`;
+                TO "${element.nome}";`;
                 elencoQuery.push(faxSchema);
                 const faxFunction = `GRANT EXECUTE
                 ON ALL functions IN SCHEMA public
-                    TO ${element.nome};`;
+                    TO "${element.nome}";`;
                 elencoQuery.push(faxFunction);
 
                 ritornoTmp = ritornoTmp + faxSchema;
