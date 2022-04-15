@@ -183,8 +183,7 @@ export class PostgresClasse extends MetadataClasse implements IPostgresClasse {
                 const ruolitesto = CostruisciRuoli(element2.ruoli);
                 const tmp = `GRANT ${eventitesto} 
                 ON "${this.nomeTabella}" 
-                TO ${ruolitesto}
-                ;`;
+                TO "${ruolitesto}";`;
                 elencoQuery.push(tmp);
                 ritorno = ritorno + '\n' + tmp;
             }
@@ -293,7 +292,7 @@ export function CostruisciRuoli(ruoli: string[]) {
     return ritorno;
 }
 export function CostruisciEvents(events: typeGrantEvent[], nome?: string) {
-    let ritorno = '';
+    let ritorno = ' ';
     for (let index = 0; index < events.length; index++) {
         const element = events[index];
         if (nome) {

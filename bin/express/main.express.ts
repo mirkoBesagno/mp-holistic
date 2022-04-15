@@ -121,15 +121,15 @@ export class MainExpress {
     ScriviFile(pathDoveScrivereFile: string): string {
         const tmp = GetListaClasseMeta<ListaExpressClasse>('nomeMetadataKeyTargetFor_Express', () => { return new ListaExpressClasse(); });
 
-        fs.rmdirSync(pathDoveScrivereFile + '/FileGenerati_MP', { recursive: true });
-        fs.mkdirSync(pathDoveScrivereFile + '/FileGenerati_MP', { recursive: true });
+        fs.rmdirSync(pathDoveScrivereFile + '/FileGenerati_MP/express', { recursive: true });
+        fs.mkdirSync(pathDoveScrivereFile + '/FileGenerati_MP/express', { recursive: true });
 
         let ritorno = '';
 
         try {
             for (let index = 0; index < tmp.length; index++) {
                 const classe = <ExpressClasse>tmp[index];
-                const path = pathDoveScrivereFile + '/FileGenerati_MP' + '/api' + '/' + classe.nomeOriginale;
+                const path = pathDoveScrivereFile + '/FileGenerati_MP/express' + '/api' + '/' + classe.nomeOriginale;
 
                 fs.mkdirSync(path, { recursive: true });
                 let ritornoClass = '';
@@ -144,7 +144,8 @@ export class MainExpress {
                 if (classe.path) ritornoClass = ritornoClass + '\npath : ' + classe.path;
                 if (classe.percorsi) ritornoClass = ritornoClass + '\npercorsi : ' + JSON.stringify(classe.percorsi);
                 if (classe.rotte) ritornoClass = ritornoClass + '\nrotte : ' + classe.rotte;
-                fs.writeFileSync(path + '/' + classe.nomeOriginale + '.classe', ritornoClass);
+                //fs.writeFileSync(path + '/' + classe.nomeOriginale + '.classe', ritornoClass);
+                fs.appendFileSync(path + '/' + classe.nomeOriginale + '.classe', ritornoClass);
                 ritornoClass = ritornoClass + '\n';
                 for (let index = 0; index < classe.listaMetodi.length; index++) {
                     const metodo = classe.listaMetodi[index];
@@ -153,7 +154,8 @@ export class MainExpress {
                     ritornoClass = ritornoClass + ritorno + '\n********************\n';
                     fs.writeFileSync(path + '/' + metodo.nomeOriginale, ritorno);
                 }
-                fs.writeFileSync(path + '/' + classe.nomeOriginale + '.collezione', ritornoClass);
+                //fs.writeFileSync(path + '/' + classe.nomeOriginale + '.collezione', ritornoClass);
+                fs.appendFileSync(path + '/' + classe.nomeOriginale + '.collezione', ritornoClass);
             }
         } catch (error) {
             return ritorno;
@@ -167,6 +169,7 @@ export class MainExpress {
             if (!fs.existsSync('./LogExpress/LogProxy_' + MainExpress.portaProcesso)) {
                 fs.mkdirSync('./LogExpress/LogProxy_' + MainExpress.portaProcesso, { recursive: true });
             }
+            //fs.writeFileSync('./LogExpress/LogProxy_' + MainExpress.portaProcesso + '/log.txt', '');
             fs.writeFileSync('./LogExpress/LogProxy_' + MainExpress.portaProcesso + '/log.txt', '');
         } catch (error) {
             console.log(error);
@@ -181,6 +184,7 @@ export class MainExpress {
             if (!fs.existsSync('./LogExpress/Processo_' + MainExpress.portaProcesso)) {
                 fs.mkdirSync('./LogExpress/Processo_' + MainExpress.portaProcesso, { recursive: true });
             }
+            //fs.writeFileSync('./LogExpress/Processo_' + MainExpress.portaProcesso + '/log.txt', '');
             fs.writeFileSync('./LogExpress/Processo_' + MainExpress.portaProcesso + '/log.txt', '');
         } catch (error) {
             console.log(error);
@@ -219,6 +223,7 @@ export class MainExpress {
                     if (!fs.existsSync('./LogExpress/LogProxy_' + MainExpress.portaProxy)) {
                         fs.mkdirSync('./LogExpress/LogProxy_' + MainExpress.portaProxy, { recursive: true });
                     }
+                    //fs.writeFileSync('./LogExpress/LogProxy_' + MainExpress.portaProxy + '/log.txt', '');
                     fs.writeFileSync('./LogExpress/LogProxy_' + MainExpress.portaProxy + '/log.txt', '');
 
                     MainExpress.portaProxy = this.percorsi.porta;

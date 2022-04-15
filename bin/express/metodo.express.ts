@@ -235,7 +235,7 @@ export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
                         apiSpeedLimiter,/*csrfProtection,*/
                         async (req: Request, res: Response) => {
                             //console.log("GET");
-                            let id: ITracciamentoQualita = {
+                            const id: ITracciamentoQualita = {
                                 id: GenerateID(),
                                 inizio: new Date().getTime(),
                                 differenza:undefined,
@@ -264,7 +264,7 @@ export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
                         apiRateLimiter, apiSpeedLimiter,/*csrfProtection,*/
                         async (req: Request, res: Response) => {
                             //console.log("POST");
-                            let id: ITracciamentoQualita = {
+                            const id: ITracciamentoQualita = {
                                 id: GenerateID(),
                                 inizio: new Date().getTime(),
                                 differenza:undefined,
@@ -293,7 +293,7 @@ export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
                         apiRateLimiter, apiSpeedLimiter,/*csrfProtection,*/
                         async (req: Request, res: Response) => {
                             //console.log("DELETE");
-                            let id: ITracciamentoQualita = {
+                            const id: ITracciamentoQualita = {
                                 id: GenerateID(),
                                 inizio: new Date().getTime(),
                                 differenza:undefined,
@@ -322,7 +322,7 @@ export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
                         apiRateLimiter, apiSpeedLimiter,/*csrfProtection,*/
                         async (req: Request, res: Response) => {
                             //console.log("PATCH");
-                            let id: ITracciamentoQualita = {
+                            const id: ITracciamentoQualita = {
                                 id: GenerateID(),
                                 inizio: new Date().getTime(),
                                 differenza:undefined,
@@ -351,7 +351,7 @@ export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
                         apiRateLimiter, apiSpeedLimiter,/*csrfProtection,*/
                         async (req: Request, res: Response) => {
                             //console.log("PURGE");
-                            let id: ITracciamentoQualita = {
+                            const id: ITracciamentoQualita = {
                                 id: GenerateID(),
                                 inizio: new Date().getTime(),
                                 differenza:undefined,
@@ -381,7 +381,7 @@ export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
                         apiSpeedLimiter,/*csrfProtection,*/
                         async (req: Request, res: Response) => {
                             //console.log("PUT");
-                            let id: ITracciamentoQualita = {
+                            const id: ITracciamentoQualita = {
                                 id: GenerateID(),
                                 inizio: new Date().getTime(),
                                 differenza:undefined,
