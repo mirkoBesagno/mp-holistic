@@ -4,6 +4,10 @@ si prefigge l'umile compito di aiutare nella creazione di :
 - un semplice ORM per Postgres
 Questo tramite decoratori o classi particolari.
 
+# esempio
+esempio reperibile all'indirizzo:
+https://github.com/mirkoBesagno/test-mp-holistic
+
 # termin-decorator
 
 passi per eseguire il programma:
