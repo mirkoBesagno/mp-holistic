@@ -119,7 +119,7 @@ export class PostgresClasse extends MetadataClasse implements IPostgresClasse {
                 for (let index = this.listaProprieta.length - 1; index >= 0; index--) {
                     const element = <PostgresProprieta>this.listaProprieta[index];
                     ritornoTmp = ritornoTmp + " " + element.nome + " ";
-                    if (index - 1 >= 0) ritornoTmp = ritornoTmp + ', ';
+                    if (index - 1 >= 0) ritornoTmp = ritornoTmp + '\n ';
 
                 }
                 ritornoTmp = ritornoTmp + " )\n AS " + this.queryPerVista + '\n';
@@ -169,8 +169,7 @@ export class PostgresClasse extends MetadataClasse implements IPostgresClasse {
             const ruolitesto = CostruisciRuoli(element.ruoli);
             const tmp = `GRANT "${eventitesto}" 
             ON "${this.nomeTabella}" 
-            TO "${ruolitesto}"
-            ;`;
+            TO "${ruolitesto}";`;
             elencoQuery.push(tmp);
             ritorno = ritorno + '\n' + tmp;
         }

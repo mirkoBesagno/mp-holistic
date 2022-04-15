@@ -211,7 +211,7 @@ export function Rispondi(res: Response, item: IReturn, id: ITracciamentoQualita,
     if (id && 'res' in id && res) {
         id.res = res;
     }
-    var cache: any = [];
+    let cache: any = [];
     let tmpReq = '';
     let tmpRes = '';
     try {

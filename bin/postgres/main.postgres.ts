@@ -52,7 +52,9 @@ export async function EseguiQueryControllata(client: Client, query: string): Pro
         }
     }
 }
-
+export interface ISetInizializzaORM {
+    dropAllTable?: boolean, listaRuoli?: Role[], listaUser?: User[]
+}
 export class MainPostgres {
 
     listaRuoli: Role[] = [];
@@ -65,18 +67,20 @@ export class MainPostgres {
         this.listaClassi = GetListaClasseMeta<ListaPostgresClasse>('nomeMetadataKeyTargetFor_Postgres', () => { return new ListaPostgresClasse(); });
     }
 
-    InizializzaORM(listaRuoli?: Role[], listaUser?: User[]): string {
+    InizializzaORM(item?: ISetInizializzaORM): string {
         try {
+            if (item == undefined) item = {};
 
             const ritorno = '';
 
             this.elencoQuery.push(`CREATE EXTENSION plv8;`);
 
-            this.elencoQuery.push(DropAllTable());
+            if (item.dropAllTable == undefined || item.dropAllTable == true)
+                this.elencoQuery.push(DropAllTable());
 
             this.elencoQuery.push(TriggerUpdate_updated_at_column());
-            this.InizializzaRuoli(this.elencoQuery, listaRuoli ?? []);
-            this.InizializzaUser(this.elencoQuery, listaUser ?? []);
+            this.InizializzaRuoli(this.elencoQuery, item.listaRuoli ?? []);
+            this.InizializzaUser(this.elencoQuery, item.listaUser ?? []);
             /*  */
             for (const element of this.listaClassi) {
                 (<PostgresClasse>element).CostruisciCreazioneDB(this.elencoQuery, true);
@@ -329,26 +333,26 @@ export class MainPostgres {
             for (let index = 0; index < this.elencoQuery.length; index++) {
                 const element = this.elencoQuery[index];
                 //fs.writeFileSync(path + '/exe.dump', element.toString());
-                fs.appendFileSync(path + '/exe.dump', element.toString());
+                fs.appendFileSync(path + '/exe.dump', '\n' + element.toString());
             }
 
             for (const element of this.listaClassi) {
                 (<PostgresClasse>element).CostruisciCreazioneDB(query, false);
             }
             //fs.writeFileSync(path + '/Generici/relazioni.generale', query.toString());
-            fs.appendFileSync(path + '/Generici/relazioni.generale', query.toString());
+            fs.appendFileSync(path + '/Generici/relazioni.generale', '\n' + query.toString());
             query = [];
             for (const element of this.listaClassi) {
                 (<PostgresClasse>element).CostruisceGrant((<PostgresClasse>element).grants ?? [], query);
             }
             //fs.writeFileSync(path + '/Generici/grant.generale', query.toString());
-            fs.appendFileSync(path + '/Generici/grant.generale', query.toString());
+            fs.appendFileSync(path + '/Generici/grant.generale', '\n' + query.toString());
             query = [];
             for (const element of this.listaClassi) {
                 if ((<PostgresClasse>element).listaPolicy) {
                     ((<PostgresClasse>element).listaPolicy ?? new ListaPolicy()).CostruiscePolicySicurezza(query);
                     //fs.writeFileSync(path + '/Generici/policy.generale', query.toString());
-                    fs.appendFileSync(path + '/Generici/policy.generale', query.toString());
+                    fs.appendFileSync(path + '/Generici/policy.generale', '\n' + query.toString());
                 }
             }
             /*  */
@@ -360,16 +364,16 @@ export class MainPostgres {
                 query = [];
                 (<PostgresClasse>element).CostruisciCreazioneDB(query, false);
                 //fs.writeFileSync(pathSpec + '/relazioni.' + element.nomeOriginale, query.toString());
-                fs.appendFileSync(pathSpec + '/relazioni.' + element.nomeOriginale, query.toString());
+                fs.appendFileSync(pathSpec + '/relazioni.' + element.nomeOriginale, '\n' + query.toString());
                 query = [];
                 (<PostgresClasse>element).CostruisceGrant((<PostgresClasse>element).grants ?? [], query);
                 //fs.writeFileSync(pathSpec + '/grant.' + element.nomeOriginale, query.toString());
-                fs.appendFileSync(pathSpec + '/grant.' + element.nomeOriginale, query.toString());
+                fs.appendFileSync(pathSpec + '/grant.' + element.nomeOriginale, '\n' + query.toString());
                 if ((<PostgresClasse>element).listaPolicy) {
                     query = [];
                     ((<PostgresClasse>element).listaPolicy ?? new ListaPolicy()).CostruiscePolicySicurezza(query);
                     //fs.writeFileSync(pathSpec + '/policy.' + element.nomeOriginale, query.toString());
-                    fs.appendFileSync(pathSpec + '/policy.' + element.nomeOriginale, query.toString());
+                    fs.appendFileSync(pathSpec + '/policy.' + element.nomeOriginale, '\n' + query.toString());
                 }
             }
 
