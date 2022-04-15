@@ -53,7 +53,19 @@ export async function EseguiQueryControllata(client: Client, query: string): Pro
     }
 }
 export interface ISetInizializzaORM {
-    dropAllTable?: boolean, listaRuoli?: Role[], listaUser?: User[]
+    /**
+     * se noin settato o se impostato a true, comportera l'eliminazione preventiva di tutto il database e la pulizia di ruoli ecc, 
+     * che inevitabilmente cancellera ogni dato. 
+     */
+    dropAllTable?: boolean, 
+    /**
+     * registra qui i tuoi ruoli
+     */
+    listaRuoli?: Role[], 
+    /**
+     * registra qui i tuoi user
+     */
+    listaUser?: User[]
 }
 export class MainPostgres {
 
