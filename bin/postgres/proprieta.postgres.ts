@@ -49,7 +49,7 @@ export class PostgresProprieta extends MetadataProprieta implements IPostgresPro
         this.descrizione = "";
         this.sommario = "";
         /*  */
-
+        if(item.nome && this.nomeOriginale == '') this.nomeOriginale = item.nome;
 
         if (item) {
             if (item.Constraints) this.Constraints = new Constraint(item.Constraints);

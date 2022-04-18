@@ -44,6 +44,9 @@ export class PostgresClasse extends MetadataClasse implements IPostgresClasse {
 
     constructor(item: IPostgresClasse) {
         super(item);
+        if ((this.nomeOriginale == '' || this.nomeOriginale == undefined) &&
+            item.nomeTabella)
+            this.nomeOriginale = item.nomeTabella;
         this.creaId = item.creaId ?? true;
         this.nomeTabella = item.nomeTabella ?? this.nomeOriginale;
         //this.listaProprieta = new Lista();

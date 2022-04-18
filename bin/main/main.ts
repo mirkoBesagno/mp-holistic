@@ -5,7 +5,7 @@
 import express from "express";
 import { MainExpress } from "../express/main.express";
 import { MainPostgres } from "../postgres/main.postgres";
-
+import fs from "fs";
 /* export class User {
     nome: string;
     option: {
@@ -41,6 +41,15 @@ export class Main {
         if (pathExe) {
             MainExpress.pathExe = pathExe ?? '';
         }
+    }
+    InizializzaFile(pathDoveScrivereFile: string){
+        try {
+            fs.rmSync(pathDoveScrivereFile + '/FileGenerati_MP', { recursive: true });
+        } catch (error) {
+            //console.log(error);
+        }
+            fs.mkdirSync(pathDoveScrivereFile + '/FileGenerati_MP', { recursive: true });
+       
     }
 
 }

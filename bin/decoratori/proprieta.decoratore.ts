@@ -33,7 +33,15 @@ export function DecoratoreProprieta(nomeClasse: string, nomeProprieta: string, i
             if (item.itemPostgresProprieta) {
                 const list: ListaPostgresClasse = GetListaClasseMeta<ListaPostgresClasse>('nomeMetadataKeyTargetFor_Postgres', () => { return new ListaPostgresClasse(); });
 
-                const classe = list.CercaSeNoAggiungi(new PostgresClasse({ nomeOriginale: nomeClasse, creaId: true, abilitaUpdatedAt: true, abilitaDeletedAt: true, abilitaCreatedAt: true, nomeTabella: nomeClasse }));
+                const classe = list.CercaSeNoAggiungi(new PostgresClasse(
+                    { 
+                        nomeOriginale: nomeClasse, 
+                        creaId: true, 
+                        abilitaUpdatedAt: true, 
+                        abilitaDeletedAt: true, 
+                        abilitaCreatedAt: true, 
+                        nomeTabella: nomeClasse 
+                    }));
                 const proprieta = classe.listaProprieta.CercaSeNoAggiungi(new PostgresProprieta(item.itemPostgresProprieta));
                 proprieta.nome = nomeProprieta;
                 SalvaListaMetaClasse('nomeMetadataKeyTargetFor_Postgres', list);
