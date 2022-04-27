@@ -263,7 +263,6 @@ export class MainPostgres {
         if (listaUser) {
             for (let index = 0; index < listaUser.length; index++) {
                 const element = listaUser[index];
-
                 const faxSchema = `GRANT USAGE
                 ON ALL SEQUENCES IN SCHEMA public
                 TO "${element.nome}";`;
@@ -336,7 +335,7 @@ export class MainPostgres {
             try {
                 fs.rmSync(pathDoveScrivereFile + '/FileGenerati_MP/postgres', { recursive: true });
             } catch (error) {
-
+                console.log("...");                
             }
             fs.mkdirSync(pathDoveScrivereFile + '/FileGenerati_MP/postgres', { recursive: true });
 
