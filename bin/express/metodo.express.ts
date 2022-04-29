@@ -684,11 +684,11 @@ export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
                         else { tmp.stato = 298; }
                     }
                     else {
-                        if ('body' in tmpReturn && 'stato' in tmpReturn && typeof tmpReturn.body === 'string') {
+                        /* if ('body' in tmpReturn && 'stato' in tmpReturn && typeof tmpReturn.body === 'string') {
                             tmp.stato = tmpReturn.stato;
                             tmp.body = tmpReturn.body;
                         }
-                        else if (typeof tmpReturn === 'object' && tmpReturn !== null &&
+                        else  */if (typeof tmpReturn === 'object' && tmpReturn !== null &&
                             'stato' in tmpReturn && 'body' in tmpReturn) {
                             // eslint-disable-next-line prefer-const
                             for (let attribut in tmpReturn.body) {

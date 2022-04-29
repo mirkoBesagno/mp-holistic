@@ -217,7 +217,16 @@ export function Rispondi(res: Response, item: IReturn, id: ITracciamentoQualita,
                 isFile.send(res, item);
             }
         } catch (error) {
-            res.status(598).send({});
+            if (isFile.catch == undefined) {
+                res.status(598).send({});
+            }
+            else {
+                try {
+                    isFile.catch(res, error);
+                } catch (error) {
+                    res.status(598).send({});
+                }
+            }
         }
     }
     else {

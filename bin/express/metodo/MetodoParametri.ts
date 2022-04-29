@@ -4,7 +4,8 @@ import { IRaccoltaPercorsi } from "./utility";
 
 export interface IFile {
     path: string
-    send?:(res:Response, item:IReturn)=>null
+    send?:(res:Response, item:IReturn)=>null,
+    catch?:(res:Response, error:any)=>null
 }
 
 export interface IMetodoParametri {
