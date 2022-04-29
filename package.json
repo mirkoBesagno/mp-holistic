@@ -6,7 +6,8 @@
     "yarn": false,
     "contents": "dist"
   },
-  "main": "./out/index.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "keywords": [
     "orm",
     "postgres-orm",
@@ -16,7 +17,7 @@
     "mp"
   ],
   "scripts": {
-    "start-js": "node ./out/index.js",
+    "start-js": "node ./dist/index.js",
     "start": "ts-node ./index.ts",
     "test": "mocha",
     "build:copy": "ts-node -T scripts/copyFiles.ts",
