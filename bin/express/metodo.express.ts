@@ -702,7 +702,7 @@ export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
                             tmp.stato = 200//299;                            
                         }
                         else if (tmpReturn) {
-                            tmp.body = { 'messaggio': tmpReturn };
+                            tmp.body = tmpReturn;//{ 'messaggio': tmpReturn };
                             tmp.stato = 200//299;
                         }
                         else {
