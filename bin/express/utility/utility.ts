@@ -61,7 +61,7 @@ export interface ISpawTrigger {
     nome: string,
     posizione: TypePosizione
 }
-export type TypeMetod = "get" | "put" | "post" | "patch" | "purge" | "delete";
+export type TypeMetod = "get" | "put" | "post" | "patch" | "purge" | "delete" | "file";
 
 
 export function IsJsonString(str: string): boolean {
@@ -201,10 +201,17 @@ export function InizializzaLogbaseIn(req: Request, nomeMetodo?: string): ILogbas
     return tmp;
 }
 
-export function Rispondi(res: Response, item: IReturn, id: ITracciamentoQualita, key?: string, durationSecondi?: number /* , url: string */) {
+export function Rispondi(res: Response, item: IReturn, id: ITracciamentoQualita, isFile?: { path: string, root: string },
+    key?: string, durationSecondi?: number /* , url: string */) {
 
     res.statusCode = Number.parseInt('' + item.stato);
-    res.send(item.body);
+
+    if (isFile) {
+        res.sendFile(isFile.path);
+    }
+    else {
+        res.send(item.body);
+    }
     id.fine = new Date().getTime();
     id.differenza = id.fine - id.inizio;
 
@@ -220,18 +227,12 @@ export function Rispondi(res: Response, item: IReturn, id: ITracciamentoQualita,
                 if (typeof value === 'object' && value !== null && cache) {
                     // Duplicate reference found, discard key
                     if (cache.includes(value)) return;
-
                     // Store value in our collection
                     cache.push(value);
                 }
                 return value;
             });
         cache = undefined;
-        //(JSON.stringify(id.req, null, 0));
-        /* stringifyObject(id.req, {
-            indent: '  ',
-            singleQuotes: false
-        }); */
     } catch (error) {
         tmpReq = 'errore : ' + error;
     }
@@ -241,18 +242,12 @@ export function Rispondi(res: Response, item: IReturn, id: ITracciamentoQualita,
                 if (typeof value === 'object' && value !== null && cache) {
                     // Duplicate reference found, discard key
                     if (cache.includes(value)) return;
-
                     // Store value in our collection
                     cache.push(value);
                 }
                 return value;
             });
         cache = undefined;
-        //JSON.stringify(id.res, null, 0);
-        /* stringifyObject(id.res, {
-            indent: '  ',
-            singleQuotes: false
-        }); */
     } catch (error) {
         tmpRes = 'error : ' + error;
     }

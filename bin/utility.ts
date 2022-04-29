@@ -140,7 +140,7 @@ export function GenerateID() {
 }
 export function VerificaGenerica(tipo: tipo, valore: any): boolean {
     try {
-        let risultato: boolean = false;
+        let risultato = false;
         switch (tipo) {
             case 'array':
                 Array(valore);

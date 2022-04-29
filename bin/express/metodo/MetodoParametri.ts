@@ -1,7 +1,10 @@
 import { TypeInterazone, TypeMetod } from "../utility/utility";
 import { IRaccoltaPercorsi } from "./utility";
 
-
+export interface IFile {
+    path: string
+    root: string
+}
 
 export interface IMetodoParametri {
     percorsi?: IRaccoltaPercorsi;
@@ -18,8 +21,12 @@ export interface IMetodoParametri {
     descrizione?: string;
     /** il sommario è una versione piu semplice della descrizione */
     sommario?: string;
+    /** */
+    isFile?: IFile;
 }
 export class MetodoParametri implements IMetodoParametri {
+
+    isFile?: IFile | undefined;
 
     percorsi = { pathGlobal: '', patheader: '', porta: 0 };
     percorsoIndipendente = false;
@@ -28,39 +35,52 @@ export class MetodoParametri implements IMetodoParametri {
     interazione: TypeInterazone = 'rotta';
     Init(item: IMetodoParametri, pathAlternativo?: string) {
 
-        if (item.percorsoIndipendente)
+        if (item.percorsoIndipendente) {
             this.percorsoIndipendente = item.percorsoIndipendente;
-        else
+        }
+        else {
             this.percorsoIndipendente = false;
+        }
 
-        if (item.tipo != undefined)
+        if (item.tipo != undefined) {
             this.tipo = item.tipo;
+        }
 
 
         /* else if (item.tipo == undefined && pramsIndex == 0) this.tipo = 'get';
         else if (item.tipo == undefined && pramsIndex > 0) this.tipo = 'post'; */
-        else if(this.tipo == undefined)
+        else if (this.tipo == undefined) {
             this.tipo = 'get';
+        }
 
-        if (item.interazione != undefined)
+        if (item.interazione != undefined) {
             this.interazione = item.interazione;
-        else
+        }
+        else {
             this.interazione = 'rotta';
+        }
 
-        if (item.path != undefined)
+        if (item.path != undefined) {
             this.path = item.path;
-        else if (pathAlternativo && (this.path == undefined || this.path == ''))
+        }
+        else if (pathAlternativo && (this.path == undefined || this.path == '')) {
             this.path = pathAlternativo
+        }
 
         if (item.percorsi) {
             this.percorsi.patheader = item.percorsi.patheader;
             this.percorsi.porta = item.percorsi.porta;
         }
-        if (this.percorsoIndipendente)
+        if (this.percorsoIndipendente) {
             this.percorsi.pathGlobal = '/' + this.path;
-
-        else
+        }
+        else {
             this.percorsi.pathGlobal = this.percorsi.pathGlobal + '/' + this.path;
+        }
+
+        if (item.isFile) {
+            this.isFile = item.isFile;
+        }
     }
 
     PrintStruttura(): string {

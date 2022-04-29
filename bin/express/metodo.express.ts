@@ -13,7 +13,7 @@ import { IMetaMetodo, ListaMetadataMetodo, MetadataMetodo } from "../metadata/me
 import { ICache } from "../main/main";
 import { exec } from "child_process";
 import { ExpressParametro, ListaExpressParametro } from "./parametro.express";
-import { IMetodoParametri, MetodoParametri } from "./metodo/MetodoParametri";
+import { IFile, IMetodoParametri, MetodoParametri } from "./metodo/MetodoParametri";
 import { IMetodoVettori, MetodoVettori } from "./metodo/MetodoVettori";
 import { IMetodoEventi, MetodoEventi } from "./metodo/MetodoEventi";
 import { IMetodoLimitazioni, MetodoLimitazioni } from "./metodo/MetodoLimitazioni";
@@ -97,6 +97,7 @@ export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
 
 
     ConfiguraRottaApplicazione(app: any, percorsi: IRaccoltaPercorsi) {
+
         this.metodoParametri.percorsi.patheader = percorsi.patheader;
         this.metodoParametri.percorsi.porta = percorsi.porta;
 
@@ -238,10 +239,10 @@ export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
                             const id: ITracciamentoQualita = {
                                 id: GenerateID(),
                                 inizio: new Date().getTime(),
-                                differenza:undefined,
-                                fine:undefined,
-                                req:undefined,
-                                res:undefined
+                                differenza: undefined,
+                                fine: undefined,
+                                req: undefined,
+                                res: undefined
                             };
                             await this.ChiamataGenerica(req, res, id);
                         });
@@ -267,10 +268,10 @@ export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
                             const id: ITracciamentoQualita = {
                                 id: GenerateID(),
                                 inizio: new Date().getTime(),
-                                differenza:undefined,
-                                fine:undefined,
-                                req:undefined,
-                                res:undefined
+                                differenza: undefined,
+                                fine: undefined,
+                                req: undefined,
+                                res: undefined
                             };
                             await this.ChiamataGenerica(req, res, id);
                         });
@@ -296,10 +297,10 @@ export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
                             const id: ITracciamentoQualita = {
                                 id: GenerateID(),
                                 inizio: new Date().getTime(),
-                                differenza:undefined,
-                                fine:undefined,
-                                req:undefined,
-                                res:undefined
+                                differenza: undefined,
+                                fine: undefined,
+                                req: undefined,
+                                res: undefined
                             };
                             await this.ChiamataGenerica(req, res, id);
                         });
@@ -325,10 +326,10 @@ export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
                             const id: ITracciamentoQualita = {
                                 id: GenerateID(),
                                 inizio: new Date().getTime(),
-                                differenza:undefined,
-                                fine:undefined,
-                                req:undefined,
-                                res:undefined
+                                differenza: undefined,
+                                fine: undefined,
+                                req: undefined,
+                                res: undefined
                             };
                             await this.ChiamataGenerica(req, res, id);
                         });
@@ -354,10 +355,10 @@ export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
                             const id: ITracciamentoQualita = {
                                 id: GenerateID(),
                                 inizio: new Date().getTime(),
-                                differenza:undefined,
-                                fine:undefined,
-                                req:undefined,
-                                res:undefined
+                                differenza: undefined,
+                                fine: undefined,
+                                req: undefined,
+                                res: undefined
                             };
                             await this.ChiamataGenerica(req, res, id);
                         });
@@ -384,19 +385,50 @@ export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
                             const id: ITracciamentoQualita = {
                                 id: GenerateID(),
                                 inizio: new Date().getTime(),
-                                differenza:undefined,
-                                fine:undefined,
-                                req:undefined,
-                                res:undefined
+                                differenza: undefined,
+                                fine: undefined,
+                                req: undefined,
+                                res: undefined
                             };
                             await this.ChiamataGenerica(req, res, id);
+                        });
+                    break;
+                case 'file':
+
+                    corsOptions = {
+                        methods: "GET"
+                    };
+                    if (this.metodoLimitazioni.helmet == undefined) {
+                        this.metodoLimitazioni.helmet = helmet();
+                    }
+                    if (this.metodoLimitazioni.cors == undefined) {
+                        this.metodoLimitazioni.cors = cors(corsOptions);
+                    }
+                    app.get(percorsoTmp,
+                        this.metodoLimitazioni.cors,
+                        this.metodoLimitazioni.helmet,
+                        middlew,
+                        //cacheMiddleware.route(this.cacheOptionRedis ?? {}),
+                        apiRateLimiter,
+                        apiSpeedLimiter,/*csrfProtection,*/
+                        async (req: Request, res: Response) => {
+                            //console.log("PUT");
+                            const id: ITracciamentoQualita = {
+                                id: GenerateID(),
+                                inizio: new Date().getTime(),
+                                differenza: undefined,
+                                fine: undefined,
+                                req: undefined,
+                                res: undefined
+                            };
+                            await this.ChiamataGenerica(req, res, id, this.metodoParametri.isFile);
                         });
                     break;
             }
         }
 
     }
-    async ChiamataGenerica(req: Request, res: Response, id: ITracciamentoQualita) {
+    async ChiamataGenerica(req: Request, res: Response, id: ITracciamentoQualita, isFile?: IFile) {
         let passato = false;
         let logIn: any;
         let logOut: any;
@@ -421,7 +453,7 @@ export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
                             console.log('è un evento scatenante dovrei avviare un nuovo processo.');
 
                         } */
-                        Rispondi(res, rispostaPilotata, id, key, durationSecondi);
+                        Rispondi(res, rispostaPilotata, id, isFile, key, durationSecondi);
                         //throw new Error("Attenzione, cosa stai facendo?");
                     }
                     else {
@@ -487,7 +519,7 @@ export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
                                 } catch (error) {
                                     console.log(error);
                                 }
-                                Rispondi(res, tmp ?? ConstruisciErrore('Attenzione! Rimpiazzato.'), id, key, durationSecondi);
+                                Rispondi(res, tmp ?? ConstruisciErrore('Attenzione! Rimpiazzato.'), id, isFile, key, durationSecondi);
                             }
                             else {
                                 const risposta = this.metodoVettori.CercaRispostaConTrigger(req);
@@ -500,10 +532,10 @@ export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
                                             source = risposta.html;
                                         else
                                             throw new Error("Errorissimo");
-                                        Rispondi(res, { stato: risposta.stato, body: source }, id, key, durationSecondi);
+                                        Rispondi(res, { stato: risposta.stato, body: source }, id, isFile, key, durationSecondi);
                                         passato = true;
                                     } else {
-                                        Rispondi(res, tmp, id, key, durationSecondi);
+                                        Rispondi(res, tmp, id, isFile, key, durationSecondi);
                                         passato = true;
                                     }
                                 }
@@ -514,7 +546,7 @@ export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
                         } catch (errore: any) {
                             const err = ConstruisciErrore(errore);
                             err.stato = 598;
-                            Rispondi(res, err, id, key, durationSecondi);
+                            Rispondi(res, err, id, isFile, key, durationSecondi);
                         }
                     }
                     //if (this.onPrimaDiTerminareLaChiamata) tmp = this.onPrimaDiTerminareLaChiamata(tmp);
@@ -563,7 +595,7 @@ export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
                 num = tmp.stato;
                 res.statusCode = Number.parseInt('' + num);
                 res.send(tmp.body); */
-                Rispondi(res, tmp, id, key, durationSecondi);
+                Rispondi(res, tmp, id, isFile, key, durationSecondi);
             }
             else if (passato == false) {
                 if (error instanceof ErroreMio) {
@@ -578,7 +610,7 @@ export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
                     Rispondi(res, {
                         stato: (<ErroreMio>error).codiceErrore,
                         body: { errore: (<ErroreMio>error).message }
-                    }, id, key, durationSecondi);
+                    }, id, isFile, key, durationSecondi);
                 } else {
                     Rispondi(res, {
                         stato: 500,
@@ -587,7 +619,7 @@ export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
                             passato: passato,
                             info: ''
                         }
-                    }, id, key, durationSecondi);
+                    }, id, isFile, key, durationSecondi);
                 }
             }
             else {
@@ -598,7 +630,7 @@ export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
                         passato: passato,
                         info: ''
                     }
-                }, id, key, durationSecondi);
+                }, id, isFile, key, durationSecondi);
             }
             if (this.metodoEventi.onLog) {
                 this.metodoEventi.onLog(logIn, tmp, logOut, error);
