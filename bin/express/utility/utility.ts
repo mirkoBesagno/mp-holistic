@@ -8,6 +8,7 @@ import { ErroreMio } from "./ErroreMio";
 import { MainExpress } from "../main.express";
 import { ITracciamentoQualita } from "../metodo.express";
 import fs from "fs";
+import { IFile } from "../metodo/MetodoParametri";
 
 export type TypePosizione = "body" | "query" | 'header';
 
@@ -201,13 +202,18 @@ export function InizializzaLogbaseIn(req: Request, nomeMetodo?: string): ILogbas
     return tmp;
 }
 
-export function Rispondi(res: Response, item: IReturn, id: ITracciamentoQualita, isFile?: { path: string, root: string },
+export function Rispondi(res: Response, item: IReturn, id: ITracciamentoQualita, isFile?: IFile,
     key?: string, durationSecondi?: number /* , url: string */) {
 
     res.statusCode = Number.parseInt('' + item.stato);
 
     if (isFile) {
-        res.sendFile(isFile.path);
+        if (isFile.send == undefined) {
+            res.sendFile(isFile.path);
+        }
+        else {
+            isFile.send(res);
+        }
     }
     else {
         res.send(item.body);

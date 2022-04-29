@@ -3,7 +3,7 @@ import { IRaccoltaPercorsi } from "./utility";
 
 export interface IFile {
     path: string
-    root: string
+    send?:(res:any)=>null
 }
 
 export interface IMetodoParametri {
