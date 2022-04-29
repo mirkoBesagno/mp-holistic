@@ -212,7 +212,7 @@ export function Rispondi(res: Response, item: IReturn, id: ITracciamentoQualita,
             res.sendFile(isFile.path);
         }
         else {
-            isFile.send(res);
+            isFile.send(res, item);
         }
     }
     else {

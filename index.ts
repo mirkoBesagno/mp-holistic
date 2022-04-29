@@ -17,6 +17,8 @@ import { ORMObject } from "./bin/utility";
 
 import { ErroreMio } from "./bin/express/utility/ErroreMio";
 
+import { Response } from "express";
+
 export { Main as Main };
 /* export { mpMet as mpMet }; */
 /* export { mpMetGen as mpMetGen }; */
@@ -33,6 +35,8 @@ export { ListaMetadataClasse as ListaMetadataClasse};
 
 export { ORMObject as ORMObject };
 export { ErroreMio as ErroreMio };
+
+export { Response as Response };
 
 /*export { IRitornoValidatore as IRitornoValidatore };
 export { GestioneErrore as GestioneErrore };

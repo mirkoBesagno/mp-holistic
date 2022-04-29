@@ -1,9 +1,10 @@
-import { TypeInterazone, TypeMetod } from "../utility/utility";
+import { Response } from "express";
+import { IReturn, TypeInterazone, TypeMetod } from "../utility/utility";
 import { IRaccoltaPercorsi } from "./utility";
 
 export interface IFile {
     path: string
-    send?:(res:any)=>null
+    send?:(res:Response, item:IReturn)=>null
 }
 
 export interface IMetodoParametri {
