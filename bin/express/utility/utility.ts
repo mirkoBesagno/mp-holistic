@@ -207,12 +207,17 @@ export function Rispondi(res: Response, item: IReturn, id: ITracciamentoQualita,
 
     res.statusCode = Number.parseInt('' + item.stato);
 
+
     if (isFile) {
-        if (isFile.send == undefined) {
-            res.sendFile(isFile.path);
-        }
-        else {
-            isFile.send(res, item);
+        try {
+            if (isFile.send == undefined) {
+                res.sendFile(isFile.path);
+            }
+            else {
+                isFile.send(res, item);
+            }
+        } catch (error) {
+            res.status(598).send({});
         }
     }
     else {
