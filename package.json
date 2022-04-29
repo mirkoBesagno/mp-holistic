@@ -3,8 +3,7 @@
   "version": "1.0.21",
   "description": "",
   "np": {
-    "yarn": false,
-    "contents": "dist"
+    "yarn": false
   },
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
