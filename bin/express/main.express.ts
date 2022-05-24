@@ -315,4 +315,7 @@ export class MainExpress {
             }
         }
     }
+    AggiungiCartellaStaticaPerExpress(path: string) {
+        this.serverExpressDecorato.use(express.static(path));
+    }
 }
