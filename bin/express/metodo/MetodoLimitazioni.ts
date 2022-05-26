@@ -43,8 +43,8 @@ export class MetodoLimitazioni implements IMetodoLimitazioni {
             throw new Error("Errroe: rate_limit : onLimitReached");
         }
     };
-    cors = cors();
-    helmet = helmet();
+    cors?:any = cors();
+    helmet?: any= helmet();
     middleware: any[] = [];
     //cacheOptionRedis: OptionsCache;
     cacheOptionMemory?: { durationSecondi: number } = undefined;//= { durationSecondi: 1 };
@@ -53,6 +53,8 @@ export class MetodoLimitazioni implements IMetodoLimitazioni {
         if (item.rate_limit) this.rate_limit = item.rate_limit;
         if (item.middleware) this.middleware = item.middleware;
         if (item.cacheOptionMemory) this.cacheOptionMemory = item.cacheOptionMemory;
+        if(item.helmet != undefined) this.helmet = item.helmet;
+        if(item.cors != undefined) this.cors = item.cors;
     }
     
     PrintStruttura(): string {
@@ -65,5 +67,9 @@ export class MetodoLimitazioni implements IMetodoLimitazioni {
         if (this.cacheOptionMemory) ritorno = ritorno + '\ncacheOptionMemory :' + JSON.stringify(this.cacheOptionMemory);
         return ritorno;
     }
+
+    /* constructor(){
+        this.slow_down = 
+    } */
 
 }
