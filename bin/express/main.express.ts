@@ -125,6 +125,7 @@ export class MainExpress {
             try {
                 fs.rmSync(pathDoveScrivereFile + '/FileGenerati_MP/express', { recursive: true });
             } catch (error) {
+                console.log(error);                
             }
             fs.mkdirSync(pathDoveScrivereFile + '/FileGenerati_MP/express', { recursive: true });
 
@@ -314,5 +315,8 @@ export class MainExpress {
                 throw error;
             }
         }
+    }
+    AggiungiCartellaStaticaPerExpress(path: string) {
+        this.serverExpressDecorato.use(express.static(path));
     }
 }

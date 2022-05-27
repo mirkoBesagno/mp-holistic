@@ -221,12 +221,7 @@ export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
                     corsOptions = {
                         methods: 'GET',
                     }
-                    if (this.metodoLimitazioni.cors == undefined) {
-                        this.metodoLimitazioni.cors = cors(corsOptions);
-                    }
-                    if (this.metodoLimitazioni.helmet == undefined) {
-                        this.metodoLimitazioni.helmet = helmet();
-                    }
+                    this.CostruisciCors_e_Helmet(corsOptions);
                     app.get(percorsoTmp,
                         this.metodoLimitazioni.cors,
                         this.metodoLimitazioni.helmet,
@@ -251,12 +246,7 @@ export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
                     corsOptions = {
                         methods: 'POST'
                     }
-                    if (this.metodoLimitazioni.helmet == undefined) {
-                        this.metodoLimitazioni.helmet = helmet();
-                    }
-                    if (this.metodoLimitazioni.cors == undefined) {
-                        this.metodoLimitazioni.cors = cors(corsOptions);
-                    }
+                    this.CostruisciCors_e_Helmet(corsOptions);
                     app.post(percorsoTmp,
                         this.metodoLimitazioni.cors,
                         this.metodoLimitazioni.helmet,
@@ -280,12 +270,7 @@ export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
                     corsOptions = {
                         methods: "DELETE"
                     }
-                    if (this.metodoLimitazioni.helmet == undefined) {
-                        this.metodoLimitazioni.helmet = helmet();
-                    }
-                    if (this.metodoLimitazioni.cors == undefined) {
-                        this.metodoLimitazioni.cors = cors(corsOptions);
-                    }
+                    this.CostruisciCors_e_Helmet(corsOptions);
                     app.delete(percorsoTmp,
                         this.metodoLimitazioni.cors,
                         this.metodoLimitazioni.helmet,
@@ -309,12 +294,7 @@ export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
                     corsOptions = {
                         methods: "PATCH"
                     };
-                    if (this.metodoLimitazioni.helmet == undefined) {
-                        this.metodoLimitazioni.helmet = helmet();
-                    }
-                    if (this.metodoLimitazioni.cors == undefined) {
-                        this.metodoLimitazioni.cors = cors(corsOptions);
-                    }
+                    this.CostruisciCors_e_Helmet(corsOptions);
                     app.patch(percorsoTmp,
                         this.metodoLimitazioni.cors,
                         this.metodoLimitazioni.helmet,
@@ -338,12 +318,7 @@ export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
                     corsOptions = {
                         methods: "PURGE"
                     };
-                    if (this.metodoLimitazioni.helmet == undefined) {
-                        this.metodoLimitazioni.helmet = helmet();
-                    }
-                    if (this.metodoLimitazioni.cors == undefined) {
-                        this.metodoLimitazioni.cors = cors(corsOptions);
-                    }
+                    this.CostruisciCors_e_Helmet(corsOptions);
                     app.purge(percorsoTmp,
                         this.metodoLimitazioni.cors,
                         this.metodoLimitazioni.helmet,
@@ -367,12 +342,7 @@ export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
                     corsOptions = {
                         methods: "PUT"
                     };
-                    if (this.metodoLimitazioni.helmet == undefined) {
-                        this.metodoLimitazioni.helmet = helmet();
-                    }
-                    if (this.metodoLimitazioni.cors == undefined) {
-                        this.metodoLimitazioni.cors = cors(corsOptions);
-                    }
+                    this.CostruisciCors_e_Helmet(corsOptions);
                     app.put(percorsoTmp,
                         this.metodoLimitazioni.cors,
                         this.metodoLimitazioni.helmet,
@@ -398,12 +368,7 @@ export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
                     corsOptions = {
                         methods: "GET"
                     };
-                    if (this.metodoLimitazioni.helmet == undefined) {
-                        this.metodoLimitazioni.helmet = helmet();
-                    }
-                    if (this.metodoLimitazioni.cors == undefined) {
-                        this.metodoLimitazioni.cors = cors(corsOptions);
-                    }
+                    this.CostruisciCors_e_Helmet(corsOptions);
                     app.get(percorsoTmp,
                         this.metodoLimitazioni.cors,
                         this.metodoLimitazioni.helmet,
@@ -784,6 +749,19 @@ export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
             attore: attore,
             result: tmpReturn
         };
+    }
+
+    CostruisciCors_e_Helmet(corsOptions: any) {
+        if (this.metodoLimitazioni.cors == undefined && this.metodoLimitazioni.cors != false) {
+            this.metodoLimitazioni.cors = cors(corsOptions);
+        } else if(this.metodoLimitazioni.cors == false) {
+            this.metodoLimitazioni.cors = [];
+        }
+        if (this.metodoLimitazioni.helmet == undefined && this.metodoLimitazioni.helmet != false) {
+            this.metodoLimitazioni.helmet = helmet();
+        } else if (this.metodoLimitazioni.helmet == false) {
+            this.metodoLimitazioni.helmet = [];
+        }
     }
 }
 
