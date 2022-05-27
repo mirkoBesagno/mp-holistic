@@ -194,7 +194,7 @@ export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
                 this.metodoLimitazioni.cors = cors(corsOptions);
             }
             if (this.metodoLimitazioni.helmet == undefined) {
-                this.metodoLimitazioni.helmet = helmet();
+                this.metodoLimitazioni.helmet = undefined;//helmet();
             }
             app.get(percorsoTmp,
                 this.metodoLimitazioni.cors,

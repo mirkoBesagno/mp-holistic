@@ -41,7 +41,7 @@ export type TypeDecoratoreClasseSmall = {
         html?: IHtml[];
         LogGenerale?: any;
         cacheOptionMemory?: { durationSecondi: number };
-        Istanziatore?: (parametri: IParametriEstratti, listaParametri: ListaMetadataParametro) => any;
+        Istanziatore?: (parametri: IParametriEstratti, listaParametri: ListaMetadataParametro) => Promise<any> | any;
     },
     itemPostgresClasse?: {
         queryPerVista?: string,

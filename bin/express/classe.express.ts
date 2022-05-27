@@ -17,7 +17,7 @@ export interface IExpressClasse extends IMetaClasse {
     html?: IHtml[];
     LogGenerale?: any;
     cacheOptionMemory?: { durationSecondi: number };
-    Istanziatore?: (parametri: IParametriEstratti, listaParametri: ListaMetadataParametro) => any;
+    Istanziatore?: (parametri: IParametriEstratti, listaParametri: ListaMetadataParametro) => Promise<any> | any;
 }
 
 export class ExpressClasse extends MetadataClasse implements IExpressClasse {
@@ -34,7 +34,7 @@ export class ExpressClasse extends MetadataClasse implements IExpressClasse {
 
     LogGenerale?: any;
     cacheOptionMemory?: { durationSecondi: number };
-    Istanziatore?: (parametri: IParametriEstratti, listaParametri: ListaMetadataParametro) => any;
+    Istanziatore?: (parametri: IParametriEstratti, listaParametri: ListaMetadataParametro) => Promise<any> | any;
 
     GetThis() { return this; }
     constructor(item: IExpressClasse) {

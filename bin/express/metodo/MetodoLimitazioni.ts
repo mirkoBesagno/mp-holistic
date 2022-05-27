@@ -43,8 +43,8 @@ export class MetodoLimitazioni implements IMetodoLimitazioni {
             throw new Error("Errroe: rate_limit : onLimitReached");
         }
     };
-    cors = cors();
-    helmet = helmet();
+    cors ?= cors();
+    helmet ?= helmet();
     middleware: any[] = [];
     //cacheOptionRedis: OptionsCache;
     cacheOptionMemory?: { durationSecondi: number } = undefined;//= { durationSecondi: 1 };

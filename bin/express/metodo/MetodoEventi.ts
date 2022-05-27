@@ -18,13 +18,17 @@ export interface IMetodoEventi {
 
     Validatore?: (parametri: IParametriEstratti, listaParametri: ListaMetadataParametro) => IRitornoValidatore | void;
 
+    /**
+     * funzione che viene chiamata perima di eseguire il metodo, questa dovra presumibilmente creare l'oggetto che poi sara fonte per attuare la risposta.
+     * es: se voglio esporre un'api che esponga una proprieta che facciamo finta che sia il nome, questo dovra essere creato.
+     */
     Istanziatore?: (parametri: IParametriEstratti, listaParametri: ListaMetadataParametro) => Promise<any> | any;
 
     onRispostaControllatePradefinita?: (dati: IReturn) => IReturn | Promise<IReturn>;
 
     onPrimaDiTerminareLaChiamata?: (res: IReturn) => IReturn;
 
-    onDopoAverTerminatoLaFunzione?: (item: any) => any;
+    onDopoAverTerminatoLaFunzione?: (item: any) => IReturn;
 
     onPrimaDiEseguire?: (req: Request) => Request | Promise<Request>;
 }
@@ -38,13 +42,13 @@ export class MetodoEventi implements IMetodoEventi {
 
     onRispostaControllatePradefinita?: (dati: IReturn) => IReturn | Promise<IReturn>;
     onPrimaDiTerminareLaChiamata?: (res: IReturn) => IReturn;
-    onDopoAverTerminatoLaFunzione?: (item: any) => any;
+    onDopoAverTerminatoLaFunzione?: (item: any) => IReturn;
     onPrimaDiEseguire?: (req: Request) => Request | Promise<Request>;
 
 
     Validatore?: (parametri: IParametriEstratti, listaParametri: ListaMetadataParametro) => IRitornoValidatore | void;
 
-    Istanziatore?: (parametri: IParametriEstratti, listaParametri: ListaMetadataParametro) => any;
+    Istanziatore?: (parametri: IParametriEstratti, listaParametri: ListaMetadataParametro) => Promise<any> | any;
 
     Init(init: IMetodoEventi) {
         if (init.onChiamataCompletata != null) this.onChiamataCompletata = init.onChiamataCompletata;
