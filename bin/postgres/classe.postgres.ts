@@ -42,6 +42,8 @@ export class PostgresClasse extends MetadataClasse implements IPostgresClasse {
     faxSimile_abilitaCreatedAt = `updated_at timestamp with time zone  NOT NULL  DEFAULT current_timestamp`;
     faxSimile_abilitaUpdatedAt = `deleted_at timestamp with time zone`;
 
+    faxsSimileIntestazione = 'CREATE TABLE IF NOT EXISTS ';
+    faxsSimileIntestazioneView = 'CREATE OR REPLACE VIEW ';
     constructor(item: IPostgresClasse) {
         super(item);
         if ((this.nomeOriginale == '' || this.nomeOriginale == undefined) &&
@@ -53,9 +55,10 @@ export class PostgresClasse extends MetadataClasse implements IPostgresClasse {
         this.abilitaCreatedAt = item.abilitaCreatedAt ?? true;
         this.abilitaDeletedAt = item.abilitaDeletedAt ?? true;
         this.abilitaUpdatedAt = item.abilitaUpdatedAt ?? true;
+        if (item.grants) {
+            this.grants = item.grants;
+        }
     }
-    faxsSimileIntestazione = 'CREATE TABLE IF NOT EXISTS ';
-    faxsSimileIntestazioneView = 'CREATE OR REPLACE VIEW ';
     CostruisciCreazioneDB(/* client: Client */elencoQuery: string[], padreEreditario: boolean) {
         let rigaDaInserire = '';
         let ritornoTmp = '';
@@ -168,13 +171,28 @@ export class PostgresClasse extends MetadataClasse implements IPostgresClasse {
         let ritorno = '';
         for (let index = 0; index < grants.length; index++) {
             const element = grants[index];
-            const eventitesto = CostruisciEvents(element.events);
-            const ruolitesto = CostruisciRuoli(element.ruoli);
-            const tmp = `GRANT "${eventitesto}" 
-            ON "${this.nomeTabella}" 
-            TO "${ruolitesto}";`;
-            elencoQuery.push(tmp);
-            ritorno = ritorno + '\n' + tmp;
+            if (element.colonneRiferimento && element.colonneRiferimento.length > 0) {
+                for (let index = 0; index < element.colonneRiferimento.length; index++) {
+                    const colonna = element.colonneRiferimento[index];
+                    const eventitesto = CostruisciEvents(element.events, colonna);
+                    const ruolitesto = CostruisciRuoli(element.ruoli);
+                    const tmp = `GRANT ${eventitesto} 
+                    ON public."${this.nomeTabella}" 
+                    TO ${ruolitesto};`;
+                    elencoQuery.push(tmp);
+                    ritorno = ritorno + '\n' + tmp;
+                }
+            }
+            else {
+                const eventitesto = CostruisciEvents(element.events);
+                const ruolitesto = CostruisciRuoli(element.ruoli);
+                const tmp = `GRANT ${eventitesto} 
+                ON public."${this.nomeTabella}" 
+                TO ${ruolitesto};`;
+                elencoQuery.push(tmp);
+                ritorno = ritorno + '\n' + tmp;
+            }
+
         }
         for (let index = 0; index < this.listaProprieta.length; index++) {
             const element = <PostgresProprieta>this.listaProprieta[index];
@@ -184,16 +202,14 @@ export class PostgresClasse extends MetadataClasse implements IPostgresClasse {
                 const eventitesto = CostruisciEvents(element2.events, element.nome);
                 const ruolitesto = CostruisciRuoli(element2.ruoli);
                 const tmp = `GRANT ${eventitesto} 
-                ON "${this.nomeTabella}" 
-                TO "${ruolitesto}";`;
+                ON public."${this.nomeTabella}" 
+                TO ${ruolitesto};`;
                 elencoQuery.push(tmp);
                 ritorno = ritorno + '\n' + tmp;
             }
         }
         return ritorno;
     }
-
-
     Mergia(item: PostgresClasse) {
         super.Mergia(item);
 
@@ -203,6 +219,8 @@ export class PostgresClasse extends MetadataClasse implements IPostgresClasse {
         this.abilitaCreatedAt = item.abilitaCreatedAt;
         this.abilitaDeletedAt = item.abilitaDeletedAt;
         this.abilitaUpdatedAt = item.abilitaUpdatedAt;
+
+        if (item.grants) this.grants = item.grants;
     }
 }
 

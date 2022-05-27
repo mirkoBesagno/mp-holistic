@@ -82,14 +82,11 @@ export class MainPostgres {
     InizializzaORM(item?: ISetInizializzaORM): string {
         try {
             if (item == undefined) item = {};
-
             const ritorno = '';
-
             this.elencoQuery.push(`CREATE EXTENSION plv8;`);
-
-            if (item.dropAllTable == undefined || item.dropAllTable == true)
+            if (item.dropAllTable == undefined || item.dropAllTable == true) {
                 this.elencoQuery.push(DropAllTable());
-
+            }
             this.elencoQuery.push(TriggerUpdate_updated_at_column());
             this.InizializzaRuoli(this.elencoQuery, item.listaRuoli ?? []);
             this.InizializzaUser(this.elencoQuery, item.listaUser ?? []);
@@ -200,7 +197,7 @@ export class MainPostgres {
                 NOREPLICATION   
                 NOBYPASSRLS 
                 ENCRYPTED PASSWORD '${element.password}' 
-                ${element.option.connectionLimit != undefined ? 'CONNECTION LIMIT ' + element.option.connectionLimit : ''} 
+                ${element.connectionLimit != undefined ? 'CONNECTION LIMIT ' + element.connectionLimit : ''} 
                 ; \n`;
                 const faxsDrop = `DROP ROLE IF EXISTS "${element.nome}";`;
                 elencoQuery.push(faxsDrop);
@@ -244,7 +241,7 @@ export class MainPostgres {
                 NOREPLICATION  
                 NOBYPASSRLS 
                 PASSWORD '${element.password}' 
-                ${element.option.connectionLimit != undefined ? 'CONNECTION LIMIT ' + element.option.connectionLimit : ''} 
+                ${element.connectionLimit != undefined ? 'CONNECTION LIMIT ' + element.connectionLimit : ''} 
                 IN ROLE ${costruisciRuoli}
                 ; \n`;
 
@@ -335,7 +332,7 @@ export class MainPostgres {
             try {
                 fs.rmSync(pathDoveScrivereFile + '/FileGenerati_MP/postgres', { recursive: true });
             } catch (error) {
-                console.log("...");                
+                console.log("...");
             }
             fs.mkdirSync(pathDoveScrivereFile + '/FileGenerati_MP/postgres', { recursive: true });
 
@@ -400,7 +397,7 @@ export class MainPostgres {
 
         } catch (error: any | Error) {
             console.log(error);
-            return error.message?? '';            
+            return error.message ?? '';
         }
     }
 }

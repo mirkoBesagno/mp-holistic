@@ -7,7 +7,7 @@ export interface IGrant {
     ruoli: string[],
     tabellaDestinazione?: string,
     colonneRiferimento?: string[]
-    events: typeGrantEvent[],
+    events: typeGrantEvent[]
     // where: (NEW: any, OLD: any) => void | true | Error
 }
 

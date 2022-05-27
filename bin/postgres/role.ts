@@ -9,19 +9,17 @@ export class Role {
         creaDB: boolean,
         creaUser: boolean,
         login: boolean,
-        connectionLimit?: number,
         passwordCriptografia?: string,
         validUntil?: Date
     };
     inRole: string[];
-    connectionLimit: number;
+    connectionLimit?: number;
     password: string;
 
     constructor() {
         this.nome = '';
         this.option = { creaTabelle: false, creaUser: false, login: false, isSuperUser: false, creaDB: false };
         this.inRole = [];
-        this.connectionLimit = 1;
         this.password = 'password';
     }
 }
@@ -35,19 +33,17 @@ export class User {
         creaDB: boolean,
         creaUser: boolean,
         login: boolean,
-        connectionLimit?: number,
         passwordCriptografia?: string,
         validUntil?: Date
     };
     inRole: string[];
-    connectionLimit: number;
+    connectionLimit?: number;
     password: string;
 
     constructor() {
         this.nome = '';
         this.option = { creaTabelle: false, creaUser: false, login: false, isSuperUser: false, creaDB: false };
         this.inRole = [];
-        this.connectionLimit = 1;
         this.password = 'password';
     }
 }
