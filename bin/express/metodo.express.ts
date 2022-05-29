@@ -466,18 +466,23 @@ export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
                                                             (Math.random() * 10 * Math.random() * 20 * Math.random() * 5)
                                                         );
                                                 }
-                                                porta = Number(porta.toFixed(0));
-                                                const temporaneamente = `node ./${MainExpress.pathExe}`;
-                                                console.log(temporaneamente);
-                                                const proc = exec(`node ./${MainExpress.pathExe}${MainExpress.pathExeIIparte}${porta}`); //exec(`npm run start-esempio`);
-                                                MainExpress.vettoreProcessi.push({
-                                                    porta: porta,
-                                                    nomeVariabile: this.metodoSpawProcess.isSpawTrigger,
-                                                    valoreValiabile: tt,
-                                                    vettorePossibiliPosizioni: this.metodoSpawProcess.checkSpawTrigger ?? [],
-                                                    processo: proc
-                                                });
+                                                try {
 
+                                                    porta = Number(porta.toFixed(0));
+                                                    const temporaneamente = `node ./${MainExpress.pathExe}`;
+                                                    console.log(temporaneamente);
+                                                    const proc = exec(`node ./${MainExpress.pathExe}${MainExpress.pathExeIIparte}${porta}`); //exec(`npm run start-esempio`);
+                                                    MainExpress.vettoreProcessi.push({
+                                                        porta: porta,
+                                                        nomeVariabile: this.metodoSpawProcess.isSpawTrigger,
+                                                        valoreValiabile: tt,
+                                                        vettorePossibiliPosizioni: this.metodoSpawProcess.checkSpawTrigger ?? [],
+                                                        processo: proc
+                                                    });
+
+                                                } catch (error) {
+                                                    console.log(error);
+                                                }
                                             }
                                         }
                                     }
@@ -754,7 +759,7 @@ export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
     CostruisciCors_e_Helmet(corsOptions: any) {
         if (this.metodoLimitazioni.cors == undefined && this.metodoLimitazioni.cors != false) {
             this.metodoLimitazioni.cors = cors(corsOptions);
-        } else if(this.metodoLimitazioni.cors == false) {
+        } else if (this.metodoLimitazioni.cors == false) {
             this.metodoLimitazioni.cors = [];
         }
         if (this.metodoLimitazioni.helmet == undefined && this.metodoLimitazioni.helmet != false) {
