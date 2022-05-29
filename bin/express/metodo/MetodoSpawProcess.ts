@@ -6,7 +6,7 @@ import { IReturn, ISpawTrigger } from "../utility/utility";
 /**
  * attenzione
  */
-export interface IMetodoSpawProcess{
+export interface IMetodoSpawProcess {
     /**
      * questo deve essere settato sul nuome della variabile che verera restituita, questa poi verra estratta dalla risposta (nel body) sara usato per gestire il redirect dei metodi a seguire.
      * es 
@@ -41,10 +41,10 @@ export interface IMetodoSpawProcess{
 export class MetodoSpawProcess implements IMetodoSpawProcess {
 
     isSpawTrigger?: string;
-    checkSpawTrigger?: ISpawTrigger[]; 
+    checkSpawTrigger?: ISpawTrigger[];
     Init(item: IMetodoSpawProcess) {
         if (item.isSpawTrigger) this.isSpawTrigger = item.isSpawTrigger;
-        if (item.checkSpawTrigger) this.checkSpawTrigger = item.checkSpawTrigger; 
+        if (item.checkSpawTrigger) this.checkSpawTrigger = item.checkSpawTrigger;
     }
 
     VerificaPresenzaSpawnTrigger(res: IReturn) {
@@ -53,6 +53,16 @@ export class MetodoSpawProcess implements IMetodoSpawProcess {
                 return true;
             }
         }
+        /* if (this.checkSpawTrigger)
+            for (let index = 0; index < this.checkSpawTrigger.length; index++) {
+                const element = this.checkSpawTrigger[index];
+                
+                if (res.[element.posizione] instanceof Object && this.isSpawTrigger) {
+                    if (this.isSpawTrigger in res.body) {
+                        return true;
+                    }
+                }
+            } */
 
         /*  for (let index = 0; index < Main.vettoreProcessi.length; index++) {
              const element = Main.vettoreProcessi[index];
