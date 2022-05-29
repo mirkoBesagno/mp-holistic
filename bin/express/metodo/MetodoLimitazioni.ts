@@ -1,5 +1,5 @@
-import cors from "cors";
-import helmet from "helmet";
+import cors, { CorsOptions } from "cors";
+/* import helmet from "helmet"; */
 
 import { Options as OptSlowDows } from "express-slow-down";
 import { Options as OptRateLimit } from "express-rate-limit";
@@ -14,6 +14,7 @@ export interface IMetodoLimitazioni {
     slow_down?: OptSlowDows;
     rate_limit?: Partial<OptRateLimit>;
     cors?: any;
+    corsOption?: CorsOptions,
     helmet?: any;
     middleware?: any[];
     /* cacheOptionRedis?: OptionsCache; */
@@ -43,11 +44,12 @@ export class MetodoLimitazioni implements IMetodoLimitazioni {
             throw new Error("Errroe: rate_limit : onLimitReached");
         }
     };
-    cors?:any = cors();
-    helmet?: any= helmet();
+    cors?:any /* = cors() */;
+    helmet?: any /* = helmet() */;
     middleware: any[] = [];
     //cacheOptionRedis: OptionsCache;
     cacheOptionMemory?: { durationSecondi: number } = undefined;//= { durationSecondi: 1 };
+    corsOption?: cors.CorsOptions | undefined;
     Init(item: IMetodoLimitazioni) { 
         if (item.slow_down) this.slow_down = item.slow_down;
         if (item.rate_limit) this.rate_limit = item.rate_limit;
@@ -55,6 +57,7 @@ export class MetodoLimitazioni implements IMetodoLimitazioni {
         if (item.cacheOptionMemory) this.cacheOptionMemory = item.cacheOptionMemory;
         if(item.helmet != undefined) this.helmet = item.helmet;
         if(item.cors != undefined) this.cors = item.cors;
+        if (item.corsOption != undefined) this.corsOption = item.corsOption;
     }
     
     PrintStruttura(): string {

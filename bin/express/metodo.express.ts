@@ -23,6 +23,7 @@ import { ErroreMio } from "./utility/ErroreMio";
 import { MainExpress } from "./main.express";
 import { GenerateID } from "../utility";
 import { IMetodoSpawProcess, MetodoSpawProcess } from "./metodo/MetodoSpawProcess";
+import { randomUUID } from "crypto";
 
 
 export interface ITracciamentoQualita {
@@ -191,7 +192,7 @@ export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
                 methods: 'GET',
             }
             if (this.metodoLimitazioni.cors == undefined) {
-                this.metodoLimitazioni.cors = cors(corsOptions);
+                this.metodoLimitazioni.cors = cors(this.metodoLimitazioni.corsOption ?? corsOptions);
             }
             if (this.metodoLimitazioni.helmet == undefined) {
                 this.metodoLimitazioni.helmet = undefined;//helmet();
@@ -221,7 +222,7 @@ export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
                     corsOptions = {
                         methods: 'GET',
                     }
-                    this.CostruisciCors_e_Helmet(corsOptions);
+                    this.CostruisciCors_e_Helmet(this.metodoLimitazioni.corsOption ?? corsOptions);
                     app.get(percorsoTmp,
                         this.metodoLimitazioni.cors,
                         this.metodoLimitazioni.helmet,
@@ -246,7 +247,7 @@ export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
                     corsOptions = {
                         methods: 'POST'
                     }
-                    this.CostruisciCors_e_Helmet(corsOptions);
+                    this.CostruisciCors_e_Helmet(this.metodoLimitazioni.corsOption ?? corsOptions);
                     app.post(percorsoTmp,
                         this.metodoLimitazioni.cors,
                         this.metodoLimitazioni.helmet,
@@ -270,7 +271,7 @@ export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
                     corsOptions = {
                         methods: "DELETE"
                     }
-                    this.CostruisciCors_e_Helmet(corsOptions);
+                    this.CostruisciCors_e_Helmet(this.metodoLimitazioni.corsOption ?? corsOptions);
                     app.delete(percorsoTmp,
                         this.metodoLimitazioni.cors,
                         this.metodoLimitazioni.helmet,
@@ -294,7 +295,7 @@ export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
                     corsOptions = {
                         methods: "PATCH"
                     };
-                    this.CostruisciCors_e_Helmet(corsOptions);
+                    this.CostruisciCors_e_Helmet(this.metodoLimitazioni.corsOption ?? corsOptions);
                     app.patch(percorsoTmp,
                         this.metodoLimitazioni.cors,
                         this.metodoLimitazioni.helmet,
@@ -318,7 +319,7 @@ export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
                     corsOptions = {
                         methods: "PURGE"
                     };
-                    this.CostruisciCors_e_Helmet(corsOptions);
+                    this.CostruisciCors_e_Helmet(this.metodoLimitazioni.corsOption ?? corsOptions);
                     app.purge(percorsoTmp,
                         this.metodoLimitazioni.cors,
                         this.metodoLimitazioni.helmet,
@@ -342,7 +343,7 @@ export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
                     corsOptions = {
                         methods: "PUT"
                     };
-                    this.CostruisciCors_e_Helmet(corsOptions);
+                    this.CostruisciCors_e_Helmet(this.metodoLimitazioni.corsOption ?? corsOptions);
                     app.put(percorsoTmp,
                         this.metodoLimitazioni.cors,
                         this.metodoLimitazioni.helmet,
@@ -364,11 +365,10 @@ export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
                         });
                     break;
                 case 'file':
-
                     corsOptions = {
                         methods: "GET"
                     };
-                    this.CostruisciCors_e_Helmet(corsOptions);
+                    this.CostruisciCors_e_Helmet(this.metodoLimitazioni.corsOption ?? corsOptions);
                     app.get(percorsoTmp,
                         this.metodoLimitazioni.cors,
                         this.metodoLimitazioni.helmet,
@@ -429,7 +429,7 @@ export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
                                 }
                                 try {
                                     if (this.metodoSpawProcess.isSpawTrigger && this.metodoSpawProcess.VerificaPresenzaSpawnTrigger(tmp)
-                                     /* && (tmp instanceof IReturn) */ ) {
+                                     /* && (tmp instanceof IReturn) */) {
                                         if (tmp.body instanceof Object) {
                                             const tt = (<any>tmp.body)[this.metodoSpawProcess.isSpawTrigger];
                                             let t1 = false;
@@ -442,48 +442,7 @@ export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
                                             }
                                             if (tt != undefined && tt != '' && t1 == false) {
                                                 let porta = this.metodoParametri.percorsi.porta + 2;
-                                                try {
-                                                    if (MainExpress.vettoreProcessi.length > 0) {
-                                                        if ('porta' in MainExpress.vettoreProcessi[MainExpress.vettoreProcessi.length - 1])
-                                                            porta = MainExpress.vettoreProcessi[MainExpress.vettoreProcessi.length - 1].porta + 1;
-                                                    }
-                                                    if (MainExpress.vettoreProcessi.length == 0) {
-                                                        porta = porta + (Math.random() * 100 + 30) +
-                                                            (
-                                                                (Math.random() * 10 * Math.random() * 20 * Math.random() * 30) +
-                                                                (Math.random() * 10 * Math.random() * 20 * Math.random() * 30) -
-                                                                (Math.random() * 10 * Math.random() * 20 * Math.random() * 10) +
-                                                                (Math.random() * 10 * Math.random() * 20 * Math.random() * 30) -
-                                                                (Math.random() * 10 * Math.random() * 20 * Math.random() * 5)
-                                                            );
-                                                    }
-                                                } catch (error) {
-                                                    porta = porta + (Math.random() * 100 + 30) +
-                                                        (
-                                                            (Math.random() * 10 * Math.random() * 20 * Math.random() * 30) +
-                                                            (Math.random() * 10 * Math.random() * 20 * Math.random() * 30) -
-                                                            (Math.random() * 10 * Math.random() * 20 * Math.random() * 10) +
-                                                            (Math.random() * 10 * Math.random() * 20 * Math.random() * 30) -
-                                                            (Math.random() * 10 * Math.random() * 20 * Math.random() * 5)
-                                                        );
-                                                }
-                                                try {
-
-                                                    porta = Number(porta.toFixed(0));
-                                                    const temporaneamente = `node ./${MainExpress.pathExe}`;
-                                                    console.log(temporaneamente);
-                                                    const proc = exec(`node ./${MainExpress.pathExe}${MainExpress.pathExeIIparte}${porta}`); //exec(`npm run start-esempio`);
-                                                    MainExpress.vettoreProcessi.push({
-                                                        porta: porta,
-                                                        nomeVariabile: this.metodoSpawProcess.isSpawTrigger,
-                                                        valoreValiabile: tt,
-                                                        vettorePossibiliPosizioni: this.metodoSpawProcess.checkSpawTrigger ?? [],
-                                                        processo: proc
-                                                    });
-
-                                                } catch (error) {
-                                                    console.log(error);
-                                                }
+                                                this.EseguiProcessoParallelo(this.metodoSpawProcess,tt,porta);
                                             }
                                         }
                                     }
@@ -607,6 +566,51 @@ export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
                 this.metodoEventi.onLog(logIn, tmp, logOut, error);
             }
         }
+    }
+    EseguiProcessoParallelo(metodoSpawProcess: MetodoSpawProcess, valoreValiabile: string, porta: number) {
+        MainExpress.AggiungiProcessoParallelo(metodoSpawProcess, valoreValiabile, porta);
+        /* try {
+            if (MainExpress.vettoreProcessi.length > 0) {
+                if ('porta' in MainExpress.vettoreProcessi[MainExpress.vettoreProcessi.length - 1])
+                    porta = MainExpress.vettoreProcessi[MainExpress.vettoreProcessi.length - 1].porta + 1;
+            }
+            if (MainExpress.vettoreProcessi.length == 0) {
+                porta = porta + (Math.random() * 100 + 30) +
+                    (
+                        (Math.random() * 10 * Math.random() * 20 * Math.random() * 30) +
+                        (Math.random() * 10 * Math.random() * 20 * Math.random() * 30) -
+                        (Math.random() * 10 * Math.random() * 20 * Math.random() * 10) +
+                        (Math.random() * 10 * Math.random() * 20 * Math.random() * 30) -
+                        (Math.random() * 10 * Math.random() * 20 * Math.random() * 5)
+                    );
+            }
+        } catch (error) {
+            porta = porta + (Math.random() * 100 + 30) +
+                (
+                    (Math.random() * 10 * Math.random() * 20 * Math.random() * 30) +
+                    (Math.random() * 10 * Math.random() * 20 * Math.random() * 30) -
+                    (Math.random() * 10 * Math.random() * 20 * Math.random() * 10) +
+                    (Math.random() * 10 * Math.random() * 20 * Math.random() * 30) -
+                    (Math.random() * 10 * Math.random() * 20 * Math.random() * 5)
+                );
+        }
+        try {
+
+            porta = Number(porta.toFixed(0));
+            const temporaneamente = `node ./${MainExpress.pathExe}`;
+            console.log(temporaneamente);
+            const proc = exec(`node ./${MainExpress.pathExe}${MainExpress.pathExeIIparte}${porta}`); //exec(`npm run start-esempio`);
+            MainExpress.vettoreProcessi.push({
+                porta: porta,
+                nomeVariabile: metodoSpawProcess.isSpawTrigger ?? String(randomUUID()),
+                valoreValiabile: valoreValiabile,
+                vettorePossibiliPosizioni: metodoSpawProcess.checkSpawTrigger ?? [],
+                processo: proc
+            });
+
+        } catch (error) {
+            console.log(error);
+        } */
     }
 
     async Esegui(req: Request): Promise<IReturn | undefined> {

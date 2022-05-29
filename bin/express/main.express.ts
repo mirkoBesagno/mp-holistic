@@ -15,6 +15,9 @@ import { ExpressClasse, ListaExpressClasse } from "./classe.express";
 import { ExpressMetodo } from "./metodo.express";
 import { StartMonitoring } from "../utility";
 import { ISpawTrigger } from "./utility/utility"
+import { MetodoSpawProcess } from "./metodo/MetodoSpawProcess";
+import { exec } from "child_process";
+import { randomUUID } from "crypto";
 
 
 export class MainExpress {
@@ -125,7 +128,7 @@ export class MainExpress {
             try {
                 fs.rmSync(pathDoveScrivereFile + '/FileGenerati_MP/express', { recursive: true });
             } catch (error) {
-                console.log(error);                
+                console.log(error);
             }
             fs.mkdirSync(pathDoveScrivereFile + '/FileGenerati_MP/express', { recursive: true });
 
@@ -318,5 +321,50 @@ export class MainExpress {
     }
     AggiungiCartellaStaticaPerExpress(path: string) {
         this.serverExpressDecorato.use(express.static(path));
+    }
+    static AggiungiProcessoParallelo(metodoSpawProcess: MetodoSpawProcess, valoreValiabile: string, porta: number) {
+            try {
+                if (MainExpress.vettoreProcessi.length > 0) {
+                    if ('porta' in MainExpress.vettoreProcessi[MainExpress.vettoreProcessi.length - 1])
+                        porta = MainExpress.vettoreProcessi[MainExpress.vettoreProcessi.length - 1].porta + 1;
+                }
+                if (MainExpress.vettoreProcessi.length == 0) {
+                    porta = porta + (Math.random() * 100 + 30) +
+                        (
+                            (Math.random() * 10 * Math.random() * 20 * Math.random() * 30) +
+                            (Math.random() * 10 * Math.random() * 20 * Math.random() * 30) -
+                            (Math.random() * 10 * Math.random() * 20 * Math.random() * 10) +
+                            (Math.random() * 10 * Math.random() * 20 * Math.random() * 30) -
+                            (Math.random() * 10 * Math.random() * 20 * Math.random() * 5)
+                        );
+                }
+            } catch (error) {
+                porta = porta + (Math.random() * 100 + 30) +
+                    (
+                        (Math.random() * 10 * Math.random() * 20 * Math.random() * 30) +
+                        (Math.random() * 10 * Math.random() * 20 * Math.random() * 30) -
+                        (Math.random() * 10 * Math.random() * 20 * Math.random() * 10) +
+                        (Math.random() * 10 * Math.random() * 20 * Math.random() * 30) -
+                        (Math.random() * 10 * Math.random() * 20 * Math.random() * 5)
+                    );
+            }
+            try {
+
+                porta = Number(porta.toFixed(0));
+                const temporaneamente = `node ./${MainExpress.pathExe}`;
+                console.log(temporaneamente);
+                const proc = exec(`node ./${MainExpress.pathExe}${MainExpress.pathExeIIparte}${porta}`); //exec(`npm run start-esempio`);
+                MainExpress.vettoreProcessi.push({
+                    porta: porta,
+                    nomeVariabile: metodoSpawProcess.isSpawTrigger ?? String(randomUUID()),
+                    valoreValiabile: valoreValiabile,
+                    vettorePossibiliPosizioni: metodoSpawProcess.checkSpawTrigger ?? [],
+                    processo: proc
+                });
+
+            } catch (error) {
+                console.log(error);
+            }
+        
     }
 }
