@@ -175,11 +175,11 @@ export class MainExpress {
     InizializzaCartellaFileLogProxy() {
         try {
             /**log proxy */
-            if (!fs.existsSync('./LogExpress/LogProxy_' + MainExpress.portaProcesso)) {
-                fs.mkdirSync('./LogExpress/LogProxy_' + MainExpress.portaProcesso, { recursive: true });
+            if (!fs.existsSync('./LogExpress/LogProxy_' + MainExpress.portaProxy)) {
+                fs.mkdirSync('./LogExpress/LogProxy_' + MainExpress.portaProxy, { recursive: true });
             }
             //fs.writeFileSync('./LogExpress/LogProxy_' + MainExpress.portaProcesso + '/log.txt', '');
-            fs.writeFileSync('./LogExpress/LogProxy_' + MainExpress.portaProcesso + '/log.txt', '');
+            fs.writeFileSync('./LogExpress/LogProxy_' + MainExpress.portaProxy + '/log.txt', '');
         } catch (error) {
             console.log(error);
         }
@@ -281,7 +281,7 @@ export class MainExpress {
                             `;
                         }
                         try {
-                            fs.appendFileSync('./LogExpress/LogProxy_' + MainExpress.portaProcesso + '/' + 'log.txt', stamp);
+                            fs.appendFileSync('./LogExpress/LogProxy_' + MainExpress.portaProxy + '/' + 'log.txt', stamp);
                         } catch (error) {
                             console.log(error);
                         }
