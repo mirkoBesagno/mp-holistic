@@ -428,7 +428,8 @@ export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
                                     tmp = await this.metodoVettori.EseguiRispostaControllata(tmp);
                                 }
                                 try {
-                                    if (this.metodoSpawProcess.isSpawTrigger && this.metodoSpawProcess.VerificaPresenzaSpawnTrigger(tmp)) {
+                                    if (this.metodoSpawProcess.isSpawTrigger && this.metodoSpawProcess.VerificaPresenzaSpawnTrigger(tmp)
+                                     /* && (tmp instanceof IReturn) */ ) {
                                         if (tmp.body instanceof Object) {
                                             const tt = (<any>tmp.body)[this.metodoSpawProcess.isSpawTrigger];
                                             let t1 = false;
