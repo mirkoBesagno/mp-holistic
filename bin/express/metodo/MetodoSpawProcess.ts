@@ -33,6 +33,9 @@ export interface IMetodoSpawProcess {
      * questo sara un vettore di variabili, specifica dove potra trovare un possibile valore che determinare il sotto processo di destinazione.
      */
     checkSpawTrigger?: ISpawTrigger[];
+
+    globalPath?: [];
+    siglePath?: [];
 }
 
 /**
