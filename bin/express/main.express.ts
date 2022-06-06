@@ -38,11 +38,10 @@ export class MainExpress {
     static pathExeIIparte = ' --porta=';
     static isSottoProcesso = false;
 
-    /* isMultiProcesso = false; */
     percorsi: IRaccoltaPercorsi;
     path: string;
     serverExpressDecorato: express.Express;
-    /* listaTerminaleClassi: ListaExpressClasse; */
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     httpServer: any;
 
@@ -51,8 +50,7 @@ export class MainExpress {
 
     constructor(path: string | 'localhost', server?: express.Express, isMultiProcesso?: boolean) {
         if (isMultiProcesso) {
-            MainExpress.isSottoProcesso = isMultiProcesso;
-            //this.isMultiProcesso = isMultiProcesso;
+            MainExpress.isSottoProcesso = isMultiProcesso; 
         }
         this.path = path;
         this.percorsi = { pathGlobal: "", patheader: "", porta: 0 };
@@ -323,22 +321,12 @@ export class MainExpress {
         this.serverExpressDecorato.use(express.static(path));
     }
     static AggiungiProcessoParallelo(metodoSpawProcess: MetodoSpawProcess, valoreValiabile: string, porta: number) {
-            try {
-                if (MainExpress.vettoreProcessi.length > 0) {
-                    if ('porta' in MainExpress.vettoreProcessi[MainExpress.vettoreProcessi.length - 1])
-                        porta = MainExpress.vettoreProcessi[MainExpress.vettoreProcessi.length - 1].porta + 1;
-                }
-                if (MainExpress.vettoreProcessi.length == 0) {
-                    porta = porta + (Math.random() * 100 + 30) +
-                        (
-                            (Math.random() * 10 * Math.random() * 20 * Math.random() * 30) +
-                            (Math.random() * 10 * Math.random() * 20 * Math.random() * 30) -
-                            (Math.random() * 10 * Math.random() * 20 * Math.random() * 10) +
-                            (Math.random() * 10 * Math.random() * 20 * Math.random() * 30) -
-                            (Math.random() * 10 * Math.random() * 20 * Math.random() * 5)
-                        );
-                }
-            } catch (error) {
+        try {
+            if (MainExpress.vettoreProcessi.length > 0) {
+                if ('porta' in MainExpress.vettoreProcessi[MainExpress.vettoreProcessi.length - 1])
+                    porta = MainExpress.vettoreProcessi[MainExpress.vettoreProcessi.length - 1].porta + 1;
+            }
+            if (MainExpress.vettoreProcessi.length == 0) {
                 porta = porta + (Math.random() * 100 + 30) +
                     (
                         (Math.random() * 10 * Math.random() * 20 * Math.random() * 30) +
@@ -348,23 +336,33 @@ export class MainExpress {
                         (Math.random() * 10 * Math.random() * 20 * Math.random() * 5)
                     );
             }
-            try {
+        } catch (error) {
+            porta = porta + (Math.random() * 100 + 30) +
+                (
+                    (Math.random() * 10 * Math.random() * 20 * Math.random() * 30) +
+                    (Math.random() * 10 * Math.random() * 20 * Math.random() * 30) -
+                    (Math.random() * 10 * Math.random() * 20 * Math.random() * 10) +
+                    (Math.random() * 10 * Math.random() * 20 * Math.random() * 30) -
+                    (Math.random() * 10 * Math.random() * 20 * Math.random() * 5)
+                );
+        }
+        try {
 
-                porta = Number(porta.toFixed(0));
-                const temporaneamente = `node ./${MainExpress.pathExe}`;
-                console.log(temporaneamente);
-                const proc = exec(`node ./${MainExpress.pathExe}${MainExpress.pathExeIIparte}${porta}`); //exec(`npm run start-esempio`);
-                MainExpress.vettoreProcessi.push({
-                    porta: porta,
-                    nomeVariabile: metodoSpawProcess.isSpawTrigger ?? String(randomUUID()),
-                    valoreValiabile: valoreValiabile,
-                    vettorePossibiliPosizioni: metodoSpawProcess.checkSpawTrigger ?? [],
-                    processo: proc
-                });
+            porta = Number(porta.toFixed(0));
+            const temporaneamente = `node ./${MainExpress.pathExe}`;
+            console.log(temporaneamente);
+            const proc = exec(`node ./${MainExpress.pathExe}${MainExpress.pathExeIIparte}${porta}`); //exec(`npm run start-esempio`);
+            MainExpress.vettoreProcessi.push({
+                porta: porta,
+                nomeVariabile: metodoSpawProcess.isSpawTrigger ?? String(randomUUID()),
+                valoreValiabile: valoreValiabile,
+                vettorePossibiliPosizioni: metodoSpawProcess.checkSpawTrigger ?? [],
+                processo: proc
+            });
 
-            } catch (error) {
-                console.log(error);
-            }
-        
+        } catch (error) {
+            console.log(error);
+        }
+
     }
 }

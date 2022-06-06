@@ -10,8 +10,7 @@ import { Request, Response } from "express";
 
 import fs from 'fs';
 import { IMetaMetodo, ListaMetadataMetodo, MetadataMetodo } from "../metadata/metodo.metadata";
-import { ICache } from "../main/main";
-import { exec } from "child_process";
+import { ICache } from "../main/main"; 
 import { ExpressParametro, ListaExpressParametro } from "./parametro.express";
 import { IFile, IMetodoParametri, MetodoParametri } from "./metodo/MetodoParametri";
 import { IMetodoVettori, MetodoVettori } from "./metodo/MetodoVettori";
@@ -22,8 +21,7 @@ import { IRaccoltaPercorsi } from "./metodo/utility";
 import { ErroreMio } from "./utility/ErroreMio";
 import { MainExpress } from "./main.express";
 import { GenerateID } from "../utility";
-import { IMetodoSpawProcess, MetodoSpawProcess } from "./metodo/MetodoSpawProcess";
-import { randomUUID } from "crypto";
+import { IMetodoSpawProcess, MetodoSpawProcess } from "./metodo/MetodoSpawProcess"; 
 
 
 export interface ITracciamentoQualita {
@@ -441,7 +439,7 @@ export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
                                                 }
                                             }
                                             if (tt != undefined && tt != '' && t1 == false) {
-                                                let porta = this.metodoParametri.percorsi.porta + 2;
+                                                const porta = this.metodoParametri.percorsi.porta + 2;
                                                 this.EseguiProcessoParallelo(this.metodoSpawProcess,tt,porta);
                                             }
                                         }
