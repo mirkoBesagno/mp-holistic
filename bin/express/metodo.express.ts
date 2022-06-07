@@ -440,7 +440,7 @@ export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
                                             }
                                             if (tt != undefined && tt != '' && t1 == false) {
                                                 const porta = this.metodoParametri.percorsi.porta + 2;
-                                                this.EseguiProcessoParallelo(this.metodoSpawProcess,tt,porta);
+                                                this.EseguiProcessoParallelo(this.metodoSpawProcess,tt,porta,req.path);
                                             }
                                         }
                                     }
@@ -565,8 +565,8 @@ export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
             }
         }
     }
-    EseguiProcessoParallelo(metodoSpawProcess: MetodoSpawProcess, valoreValiabile: string, porta: number) {
-        MainExpress.AggiungiProcessoParallelo(metodoSpawProcess, valoreValiabile, porta);
+    EseguiProcessoParallelo(metodoSpawProcess: MetodoSpawProcess, valoreValiabile: string, porta: number, pathScatenante:string) {
+        MainExpress.AggiungiProcessoParallelo(metodoSpawProcess, valoreValiabile, porta, pathScatenante);
         /* try {
             if (MainExpress.vettoreProcessi.length > 0) {
                 if ('porta' in MainExpress.vettoreProcessi[MainExpress.vettoreProcessi.length - 1])
@@ -850,6 +850,7 @@ export class ListaExpressMetodo extends ListaMetadataMetodo {
     }
 
     ConfiguraListaRotteApplicazione(app: any, percorsi: IRaccoltaPercorsi) {
+        
         for (let index = 0; index < this.length; index++) {
             const element = <ExpressMetodo>this[index];
             if (element.metodoParametri.interazione == 'rotta' || element.metodoParametri.interazione == 'ambo') {

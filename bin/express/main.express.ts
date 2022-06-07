@@ -18,6 +18,7 @@ import { ISpawTrigger } from "./utility/utility"
 import { MetodoSpawProcess } from "./metodo/MetodoSpawProcess";
 import { exec } from "child_process";
 import { randomUUID } from "crypto";
+import { Main } from "../main/main";
 
 
 export class MainExpress {
@@ -27,6 +28,7 @@ export class MainExpress {
     static proxyServer: any;
     static portaProxy = 8080;
     static portaProcesso = 8081;
+    static triggerPath?: string = undefined;
     static vettoreProcessi: {
         porta: number,
         nomeVariabile: string,
@@ -50,7 +52,7 @@ export class MainExpress {
 
     constructor(path: string | 'localhost', server?: express.Express, isMultiProcesso?: boolean) {
         if (isMultiProcesso) {
-            MainExpress.isSottoProcesso = isMultiProcesso; 
+            MainExpress.isSottoProcesso = isMultiProcesso;
         }
         this.path = path;
         this.percorsi = { pathGlobal: "", patheader: "", porta: 0 };
@@ -60,13 +62,16 @@ export class MainExpress {
     DeterminaIfIsSottoProcesso() {
         let sottoprosotto = false;
         let porta = this.percorsi.porta;
+        let pathTriggher = '';
         try {
             if (process.argv.length > 2) {
                 try {
                     console.log(process.argv[2]);
                     const substr = String(process.argv[2]).substring(8, undefined);
+                    pathTriggher = String(process.argv[3]).substring(11, undefined);
                     porta = Number(substr);
                     MainExpress.portaProcesso = porta;
+                    MainExpress.triggerPath = pathTriggher;
                     sottoprosotto = true;
                 } catch (error) {
                     console.log(error);
@@ -83,7 +88,8 @@ export class MainExpress {
         }
         return {
             porta: porta,
-            sottoprosotto: sottoprosotto
+            sottoprosotto: sottoprosotto,
+            pathTriggher: pathTriggher
         }
     }
     Inizializza(patheader: string, porta: number, /* rottaBase: boolean, creaFile?: boolean, */
@@ -320,7 +326,7 @@ export class MainExpress {
     AggiungiCartellaStaticaPerExpress(path: string) {
         this.serverExpressDecorato.use(express.static(path));
     }
-    static AggiungiProcessoParallelo(metodoSpawProcess: MetodoSpawProcess, valoreValiabile: string, porta: number) {
+    static AggiungiProcessoParallelo(metodoSpawProcess: MetodoSpawProcess, valoreValiabile: string, porta: number, pathScatenante: string) {
         try {
             if (MainExpress.vettoreProcessi.length > 0) {
                 if ('porta' in MainExpress.vettoreProcessi[MainExpress.vettoreProcessi.length - 1])
@@ -351,7 +357,7 @@ export class MainExpress {
             porta = Number(porta.toFixed(0));
             const temporaneamente = `node ./${MainExpress.pathExe}`;
             console.log(temporaneamente);
-            const proc = exec(`node ./${MainExpress.pathExe}${MainExpress.pathExeIIparte}${porta}`); //exec(`npm run start-esempio`);
+            const proc = exec(`node ./${MainExpress.pathExe}${MainExpress.pathExeIIparte}${porta} --pathexec=${pathScatenante}`); //exec(`npm run start-esempio`);
             MainExpress.vettoreProcessi.push({
                 porta: porta,
                 nomeVariabile: metodoSpawProcess.isSpawTrigger ?? String(randomUUID()),
