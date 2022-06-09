@@ -51,7 +51,6 @@ export class MetadataClasse extends Meta implements IMetaClasse {
             this.listaMetodi.Mergia(item.listaMetodi);
     }
     GetThis() { return this; }
-
 }
 
 export class ListaMetadataClasse extends ListaMeta {

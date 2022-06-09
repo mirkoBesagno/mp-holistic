@@ -1,7 +1,13 @@
 import { IReturn, ISpawTrigger } from "../utility/utility";
 
 
+export interface ITriggerPath/* SpawProcess */ {
 
+    pathAccept: string[];
+    pathDecline: string[];
+
+    abilitato: boolean;
+}
 
 /**
  * attenzione
@@ -34,8 +40,7 @@ export interface IMetodoSpawProcess {
      */
     checkSpawTrigger?: ISpawTrigger[];
 
-    globalPath?: [];
-    siglePath?: [];
+    pathAccept?: string[];
 }
 
 /**
@@ -45,9 +50,16 @@ export class MetodoSpawProcess implements IMetodoSpawProcess {
 
     isSpawTrigger?: string;
     checkSpawTrigger?: ISpawTrigger[];
+
+    pathAccept?: string[] | undefined;
+
     Init(item: IMetodoSpawProcess) {
         if (item.isSpawTrigger) this.isSpawTrigger = item.isSpawTrigger;
         if (item.checkSpawTrigger) this.checkSpawTrigger = item.checkSpawTrigger;
+
+        if (item.pathAccept) {
+            this.pathAccept = item.pathAccept
+        }
     }
 
     VerificaPresenzaSpawnTrigger(res: IReturn) {

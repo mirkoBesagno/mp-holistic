@@ -10,7 +10,7 @@ import { Request, Response } from "express";
 
 import fs from 'fs';
 import { IMetaMetodo, ListaMetadataMetodo, MetadataMetodo } from "../metadata/metodo.metadata";
-import { ICache } from "../main/main"; 
+import { ICache } from "../main/main";
 import { ExpressParametro, ListaExpressParametro } from "./parametro.express";
 import { IFile, IMetodoParametri, MetodoParametri } from "./metodo/MetodoParametri";
 import { IMetodoVettori, MetodoVettori } from "./metodo/MetodoVettori";
@@ -21,7 +21,7 @@ import { IRaccoltaPercorsi } from "./metodo/utility";
 import { ErroreMio } from "./utility/ErroreMio";
 import { MainExpress } from "./main.express";
 import { GenerateID } from "../utility";
-import { IMetodoSpawProcess, MetodoSpawProcess } from "./metodo/MetodoSpawProcess"; 
+import { IMetodoSpawProcess, MetodoSpawProcess } from "./metodo/MetodoSpawProcess";
 
 
 export interface ITracciamentoQualita {
@@ -117,7 +117,18 @@ export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
         }
 
         if (this.metodoAvviabile != undefined) {
-            this.ConfiguraRotteSwitch(app, percorsoTmp, middlew);
+            if (MainExpress.isSottoProcesso == true) {
+                if (MainExpress.triggerPath.abilitato == true) {
+                    if (MainExpress.TrovaInTriggerPath(percorsoTmp)) {
+                        this.ConfiguraRotteSwitch(app, percorsoTmp, middlew);
+                    }
+                } else {
+                    this.ConfiguraRotteSwitch(app, percorsoTmp, middlew);
+                }
+            }
+            else {
+                this.ConfiguraRotteSwitch(app, percorsoTmp, middlew);
+            }
         }
 
         if (this.metodoVettori.listaHtml) {
@@ -440,7 +451,7 @@ export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
                                             }
                                             if (tt != undefined && tt != '' && t1 == false) {
                                                 const porta = this.metodoParametri.percorsi.porta + 2;
-                                                this.EseguiProcessoParallelo(this.metodoSpawProcess,tt,porta,req.path);
+                                                this.EseguiProcessoParallelo(this.metodoSpawProcess, tt, porta, req.path);
                                             }
                                         }
                                     }
@@ -565,7 +576,7 @@ export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
             }
         }
     }
-    EseguiProcessoParallelo(metodoSpawProcess: MetodoSpawProcess, valoreValiabile: string, porta: number, pathScatenante:string) {
+    EseguiProcessoParallelo(metodoSpawProcess: MetodoSpawProcess, valoreValiabile: string, porta: number, pathScatenante: string) {
         MainExpress.AggiungiProcessoParallelo(metodoSpawProcess, valoreValiabile, porta, pathScatenante);
         /* try {
             if (MainExpress.vettoreProcessi.length > 0) {
@@ -850,7 +861,7 @@ export class ListaExpressMetodo extends ListaMetadataMetodo {
     }
 
     ConfiguraListaRotteApplicazione(app: any, percorsi: IRaccoltaPercorsi) {
-        
+
         for (let index = 0; index < this.length; index++) {
             const element = <ExpressMetodo>this[index];
             if (element.metodoParametri.interazione == 'rotta' || element.metodoParametri.interazione == 'ambo') {

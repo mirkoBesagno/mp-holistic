@@ -239,6 +239,20 @@ export class ExpressClasse extends MetadataClasse implements IExpressClasse {
                 });
         }
     }
+    
+    EstraiListaTriggerPath() {
+        //const ritorno = Array<{ pathScatenante: string, listaPath: string[] }>();
+        for (let index = 0; index < this.listaMetodi.length; index++) {
+            const element = <ExpressMetodo>(this.listaMetodi[index]);
+            if (element.metodoSpawProcess.pathAccept && element.metodoSpawProcess.isSpawTrigger) {
+                console.log('Ciao');
+
+                /* ritorno.push({
+                pathScatenante:element.metodoParametri.path   
+                }); */
+            }
+        }
+    }
 }
 
 export class ListaExpressClasse extends ListaMetadataClasse {
@@ -310,6 +324,12 @@ export class ListaExpressClasse extends ListaMetadataClasse {
         for (let index = 0; index < this.length; index++) {
             const element = <ExpressClasse>this[index];
             element.SettaPathRoot_e_Global(path, percorsi, serverExpressDecorato);
+        }
+    }
+    EstraiPath(){
+        for (let index = 0; index < this.length; index++) {
+            const element = <ExpressClasse>(this[index]);
+            element.EstraiListaTriggerPath();
         }
     }
 }

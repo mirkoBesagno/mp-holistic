@@ -15,10 +15,9 @@ import { ExpressClasse, ListaExpressClasse } from "./classe.express";
 import { ExpressMetodo } from "./metodo.express";
 import { StartMonitoring } from "../utility";
 import { ISpawTrigger } from "./utility/utility"
-import { MetodoSpawProcess } from "./metodo/MetodoSpawProcess";
+import { ITriggerPath, MetodoSpawProcess } from "./metodo/MetodoSpawProcess";
 import { exec } from "child_process";
 import { randomUUID } from "crypto";
-import { Main } from "../main/main";
 
 
 export class MainExpress {
@@ -28,7 +27,7 @@ export class MainExpress {
     static proxyServer: any;
     static portaProxy = 8080;
     static portaProcesso = 8081;
-    static triggerPath?: string = undefined;
+    static triggerPath: ITriggerPath = { pathAccept: [], pathDecline: [], abilitato: false };
     static vettoreProcessi: {
         porta: number,
         nomeVariabile: string,
@@ -71,7 +70,7 @@ export class MainExpress {
                     pathTriggher = String(process.argv[3]).substring(11, undefined);
                     porta = Number(substr);
                     MainExpress.portaProcesso = porta;
-                    MainExpress.triggerPath = pathTriggher;
+                    if (pathTriggher) MainExpress.triggerPath.pathAccept.push(pathTriggher);
                     sottoprosotto = true;
                 } catch (error) {
                     console.log(error);
@@ -92,11 +91,11 @@ export class MainExpress {
             pathTriggher: pathTriggher
         }
     }
-    Inizializza(patheader: string, porta: number, /* rottaBase: boolean, creaFile?: boolean, */
-        pathDoveScrivereFile?: string, sottoprocesso?: boolean): void {
+    Inizializza(patheader: string, porta: number, pathDoveScrivereFile?: string, sottoprocesso?: boolean, abilitatoreTriggerPath?: boolean): void {
         const isSottoprocesso = this.DeterminaIfIsSottoProcesso();
         sottoprocesso = isSottoprocesso.sottoprosotto;
         porta = isSottoprocesso.porta ?? porta;
+        if (abilitatoreTriggerPath != undefined) MainExpress.triggerPath.abilitato = abilitatoreTriggerPath;
         if (sottoprocesso) MainExpress.isSottoProcesso = sottoprocesso
         const tmp: ListaExpressClasse = GetListaClasseMeta<ListaExpressClasse>('nomeMetadataKeyTargetFor_Express', () => { return new ListaExpressClasse(); });
         console.log('');
@@ -110,7 +109,7 @@ export class MainExpress {
             (this.serverExpressDecorato).use(express.json());
             (this.serverExpressDecorato).use(cookieParser());
 
-
+            tmp.EstraiPath();
             tmp.ConfiguraListaRotteApplicazione(this.path, this.percorsi, this.serverExpressDecorato);
 
             this.httpServer = http.createServer(this.serverExpressDecorato);
@@ -123,6 +122,9 @@ export class MainExpress {
         else {
             console.log("Attenzione non vi sono rotte e quantaltro.");
         }
+    }
+    InizializzaTriggerPath() {
+
     }
 
     ScriviFile(pathDoveScrivereFile: string): string {
@@ -370,5 +372,16 @@ export class MainExpress {
             console.log(error);
         }
 
+    }
+    static TrovaInTriggerPath(item: string) {
+        for (let index = 0; index < MainExpress.triggerPath.pathAccept.length; index++) {
+            const element = MainExpress.triggerPath.pathAccept[index];
+            if (item.length >= element.length) {
+                if (item.substring(0, element.length - 1) == element) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }
