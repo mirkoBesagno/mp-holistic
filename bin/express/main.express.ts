@@ -28,6 +28,7 @@ export class MainExpress {
     static portaProxy = 8080;
     static portaProcesso = 8081;
     static triggerPath: ITriggerPath = { pathAccept: [], pathDecline: [], abilitato: false };
+    static listaPathScatenanti: Array<any> = [];
     static vettoreProcessi: {
         porta: number,
         nomeVariabile: string,
@@ -109,7 +110,7 @@ export class MainExpress {
             (this.serverExpressDecorato).use(express.json());
             (this.serverExpressDecorato).use(cookieParser());
 
-            tmp.EstraiPath();
+            MainExpress.listaPathScatenanti = tmp.EstraiPath();
             tmp.ConfiguraListaRotteApplicazione(this.path, this.percorsi, this.serverExpressDecorato);
 
             this.httpServer = http.createServer(this.serverExpressDecorato);

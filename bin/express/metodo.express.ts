@@ -120,6 +120,7 @@ export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
             if (MainExpress.isSottoProcesso == true) {
                 if (MainExpress.triggerPath.abilitato == true) {
                     if (MainExpress.TrovaInTriggerPath(percorsoTmp)) {
+                        //qui dovremo controllare se 
                         this.ConfiguraRotteSwitch(app, percorsoTmp, middlew);
                     }
                 } else {

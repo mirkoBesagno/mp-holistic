@@ -239,19 +239,23 @@ export class ExpressClasse extends MetadataClasse implements IExpressClasse {
                 });
         }
     }
-    
+
     EstraiListaTriggerPath() {
-        //const ritorno = Array<{ pathScatenante: string, listaPath: string[] }>();
+        const ritorno = Array<{ pathScatenante: string, listaPath: string[] }>();
         for (let index = 0; index < this.listaMetodi.length; index++) {
             const element = <ExpressMetodo>(this.listaMetodi[index]);
             if (element.metodoSpawProcess.pathAccept && element.metodoSpawProcess.isSpawTrigger) {
                 console.log('Ciao');
-
+                ritorno.push({
+                    listaPath: element.metodoSpawProcess.pathAccept,
+                    pathScatenante: element.metodoParametri.path
+                });
                 /* ritorno.push({
                 pathScatenante:element.metodoParametri.path   
-                }); */
+                },); */
             }
         }
+        return ritorno;
     }
 }
 
@@ -326,11 +330,14 @@ export class ListaExpressClasse extends ListaMetadataClasse {
             element.SettaPathRoot_e_Global(path, percorsi, serverExpressDecorato);
         }
     }
-    EstraiPath(){
+    EstraiPath() {
+        const ritorno = Array<Array<{ pathScatenante: string, listaPath: string[] }>>();
         for (let index = 0; index < this.length; index++) {
             const element = <ExpressClasse>(this[index]);
-            element.EstraiListaTriggerPath();
+            const tmp = element.EstraiListaTriggerPath();
+            ritorno.push(tmp);
         }
+        return ritorno;
     }
 }
 /* 
