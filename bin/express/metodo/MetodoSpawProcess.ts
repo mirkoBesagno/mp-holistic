@@ -2,6 +2,7 @@ import { IReturn, ISpawTrigger } from "../utility/utility";
 
 
 export interface ITriggerPath/* SpawProcess */ {
+    pathScatenante:string;
 
     pathAccept: string[];
     pathDecline: string[];

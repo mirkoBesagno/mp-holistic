@@ -6,6 +6,7 @@ import { IParametriEstratti } from "./utility/utility";
 import { ListaMetadataParametro } from "../metadata/parametro.metadata";
 import { IHtml, IRaccoltaPercorsi } from "./metodo/utility";
 import { ExpressParametro } from "./parametro.express";
+import { MainExpress } from "./main.express";
 
 
 export interface IExpressClasse extends IMetaClasse {
@@ -241,7 +242,7 @@ export class ExpressClasse extends MetadataClasse implements IExpressClasse {
     }
 
     EstraiListaTriggerPath() {
-        const ritorno = Array<{ pathScatenante: string, listaPath: string[] }>();
+        /* const ritorno = Array<{ pathScatenante: string, listaPath: string[] }>();
         for (let index = 0; index < this.listaMetodi.length; index++) {
             const element = <ExpressMetodo>(this.listaMetodi[index]);
             if (element.metodoSpawProcess.pathAccept && element.metodoSpawProcess.isSpawTrigger) {
@@ -250,9 +251,18 @@ export class ExpressClasse extends MetadataClasse implements IExpressClasse {
                     listaPath: element.metodoSpawProcess.pathAccept,
                     pathScatenante: element.metodoParametri.path
                 });
-                /* ritorno.push({
-                pathScatenante:element.metodoParametri.path   
-                },); */
+            }
+        }
+        return ritorno; */
+        const ritorno: string[] = [];
+        for (let index = 0; index < this.listaMetodi.length; index++) {
+            const element = <ExpressMetodo>(this.listaMetodi[index]);
+            if (element.metodoSpawProcess.pathAccept && element.metodoSpawProcess.isSpawTrigger
+                && element.nomeVariante == MainExpress.triggerPath.pathScatenante) {
+                console.log('Ciao');
+                element.metodoSpawProcess.pathAccept.forEach(element => {
+                    ritorno.push(element);
+                });
             }
         }
         return ritorno;
@@ -324,20 +334,32 @@ export class ListaExpressClasse extends ListaMetadataClasse {
         return item; */
     }
 
+    ConfiguraListaRotte(percorsi: IRaccoltaPercorsi) {
+
+        for (let index = 0; index < this.length; index++) {
+            const classe = <ExpressClasse>this[index];
+            for (let index = 0; index < classe.listaMetodi.length; index++) {
+                const metodo = <ExpressMetodo>classe.listaMetodi[index];
+                metodo.ConfiguraPath(percorsi);
+            }
+        }
+    }
     ConfiguraListaRotteApplicazione(path: string, percorsi: IRaccoltaPercorsi, serverExpressDecorato: any) {
+
+
         for (let index = 0; index < this.length; index++) {
             const element = <ExpressClasse>this[index];
             element.SettaPathRoot_e_Global(path, percorsi, serverExpressDecorato);
         }
     }
     EstraiPath() {
-        const ritorno = Array<Array<{ pathScatenante: string, listaPath: string[] }>>();
         for (let index = 0; index < this.length; index++) {
             const element = <ExpressClasse>(this[index]);
-            const tmp = element.EstraiListaTriggerPath();
-            ritorno.push(tmp);
+            if (element.path == MainExpress.triggerPath.pathScatenante) {
+                const tmp = element.EstraiListaTriggerPath();
+                MainExpress.triggerPath.pathAccept = tmp;
+            }
         }
-        return ritorno;
     }
 }
 /* 

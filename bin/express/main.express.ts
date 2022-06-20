@@ -27,7 +27,7 @@ export class MainExpress {
     static proxyServer: any;
     static portaProxy = 8080;
     static portaProcesso = 8081;
-    static triggerPath: ITriggerPath = { pathAccept: [], pathDecline: [], abilitato: false };
+    static triggerPath: ITriggerPath = { pathAccept: [], pathDecline: [], abilitato: false, pathScatenante: '' };
     static listaPathScatenanti: Array<any> = [];
     static vettoreProcessi: {
         porta: number,
@@ -71,7 +71,7 @@ export class MainExpress {
                     pathTriggher = String(process.argv[3]).substring(11, undefined);
                     porta = Number(substr);
                     MainExpress.portaProcesso = porta;
-                    if (pathTriggher) MainExpress.triggerPath.pathAccept.push(pathTriggher);
+                    if (pathTriggher) MainExpress.triggerPath.pathScatenante = pathTriggher;
                     sottoprosotto = true;
                 } catch (error) {
                     console.log(error);
@@ -106,11 +106,10 @@ export class MainExpress {
             const pathGlobal = '/' + this.path;
             this.percorsi.pathGlobal = pathGlobal;
 
-
             (this.serverExpressDecorato).use(express.json());
             (this.serverExpressDecorato).use(cookieParser());
-
-            MainExpress.listaPathScatenanti = tmp.EstraiPath();
+            //tmp.ConfiguraListaRotte(this.percorsi);
+            tmp.EstraiPath();
             tmp.ConfiguraListaRotteApplicazione(this.path, this.percorsi, this.serverExpressDecorato);
 
             this.httpServer = http.createServer(this.serverExpressDecorato);
@@ -378,7 +377,10 @@ export class MainExpress {
         for (let index = 0; index < MainExpress.triggerPath.pathAccept.length; index++) {
             const element = MainExpress.triggerPath.pathAccept[index];
             if (item.length >= element.length) {
-                if (item.substring(0, element.length - 1) == element) {
+                const tmp = item.substring(0, element.length);
+                const t1 = tmp == element;
+                console.log(t1);
+                if (tmp == element) {
                     return true;
                 }
             }

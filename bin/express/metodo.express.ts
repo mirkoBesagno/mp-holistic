@@ -95,16 +95,12 @@ export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
     GetThis() { return this; }
 
 
-    ConfiguraRottaApplicazione(app: any, percorsi: IRaccoltaPercorsi) {
-
+    ConfiguraPath(percorsi: IRaccoltaPercorsi) {
         this.metodoParametri.percorsi.patheader = percorsi.patheader;
         this.metodoParametri.percorsi.porta = percorsi.porta;
 
-        const pathGlobalTmp = percorsi.pathGlobal;
         const pathGlobal = percorsi.pathGlobal + '/' + this.metodoParametri.path;
         this.metodoParametri.percorsi.pathGlobal = pathGlobal;
-        /*  */
-        const middlew: any[] = this.metodoLimitazioni.middleware ?? [];//[];
 
         let percorsoTmp = '';
 
@@ -115,6 +111,29 @@ export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
         else {
             percorsoTmp = this.metodoParametri.percorsi.pathGlobal;
         }
+        return percorsoTmp;
+    }
+    ConfiguraRottaApplicazione(app: any, percorsi: IRaccoltaPercorsi) {
+        /* this.metodoParametri.percorsi.patheader = percorsi.patheader;
+        this.metodoParametri.percorsi.porta = percorsi.porta;
+
+        const pathGlobalTmp = percorsi.pathGlobal;
+        const pathGlobal = percorsi.pathGlobal + '/' + this.metodoParametri.path;
+        this.metodoParametri.percorsi.pathGlobal = pathGlobal;
+        
+        const middlew: any[] = this.metodoLimitazioni.middleware ?? [];//[];
+
+        let percorsoTmp = '';
+
+        if (this.metodoParametri.percorsoIndipendente) {
+            percorsoTmp = '/' + this.metodoParametri.path;
+            this.metodoParametri.percorsi.pathGlobal = percorsoTmp;
+        }
+        else {
+            percorsoTmp = this.metodoParametri.percorsi.pathGlobal;
+        } */
+        const middlew: any[] = this.metodoLimitazioni.middleware ?? [];//[];
+        let percorsoTmp = this.ConfiguraPath(percorsi);
 
         if (this.metodoAvviabile != undefined) {
             if (MainExpress.isSottoProcesso == true) {
@@ -122,6 +141,9 @@ export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
                     if (MainExpress.TrovaInTriggerPath(percorsoTmp)) {
                         //qui dovremo controllare se 
                         this.ConfiguraRotteSwitch(app, percorsoTmp, middlew);
+                    }
+                    else {
+                        console.log('Skippato...' + percorsoTmp);
                     }
                 } else {
                     this.ConfiguraRotteSwitch(app, percorsoTmp, middlew);
@@ -134,6 +156,7 @@ export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
 
         if (this.metodoVettori.listaHtml) {
             percorsoTmp = '';
+            const pathGlobalTmp = percorsi.pathGlobal;
             for (let index = 0; index < this.metodoVettori.listaHtml.length; index++) {
                 const element = this.metodoVettori.listaHtml[index];
                 if (element.percorsoIndipendente) percorsoTmp = '/' + element.path;
@@ -862,7 +885,6 @@ export class ListaExpressMetodo extends ListaMetadataMetodo {
     }
 
     ConfiguraListaRotteApplicazione(app: any, percorsi: IRaccoltaPercorsi) {
-
         for (let index = 0; index < this.length; index++) {
             const element = <ExpressMetodo>this[index];
             if (element.metodoParametri.interazione == 'rotta' || element.metodoParametri.interazione == 'ambo') {
@@ -870,6 +892,12 @@ export class ListaExpressMetodo extends ListaMetadataMetodo {
                 element.ConfiguraRottaApplicazione(app, percorsi);
             }
             //element.listaRotteGeneraChiavi=this.listaMetodiGeneraKey;
+        }
+    }
+    ConfiguraPath(percorsi: IRaccoltaPercorsi) {
+        for (let index = 0; index < this.length; index++) {
+            const element = <ExpressMetodo>this[index];
+            element.ConfiguraPath(percorsi);
         }
     }
 }
