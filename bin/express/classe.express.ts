@@ -203,7 +203,7 @@ export class ExpressClasse extends MetadataClasse implements IExpressClasse {
             this.cacheOptionMemory = item.cacheOptionMemory;
         }
     }
-    SettaPathRoot_e_Global(item: string, percorsi: IRaccoltaPercorsi, app: any) {
+    SettaPath(percorsi: IRaccoltaPercorsi) {
         /*  */
 
         if (percorsi.patheader == undefined) this.percorsi.patheader = "localhost";
@@ -216,8 +216,12 @@ export class ExpressClasse extends MetadataClasse implements IExpressClasse {
         this.percorsi.pathGlobal = pathGlobal;
 
         /*  */
-        this.ConfiguraListaRotteHTML(app, pathGlobal);
-        this.listaMetodi.ConfiguraListaRotteApplicazione(app, this.percorsi);
+
+        this.listaMetodi.ConfiguraPath(this.percorsi);
+    }
+    SettaApp(app: any) {
+        this.ConfiguraListaRotteHTML(app, this.percorsi.pathGlobal); // pathGlobal);
+        this.listaMetodi.ConfiguraListaRotteApplicazione(app/* , this.percorsi */);
     }
     ConfiguraListaRotteHTML(app: any, pathGlobal: string) {
         for (let index = 0; index < this.html.length; index++) {
@@ -241,32 +245,6 @@ export class ExpressClasse extends MetadataClasse implements IExpressClasse {
         }
     }
 
-    EstraiListaTriggerPath() {
-        /* const ritorno = Array<{ pathScatenante: string, listaPath: string[] }>();
-        for (let index = 0; index < this.listaMetodi.length; index++) {
-            const element = <ExpressMetodo>(this.listaMetodi[index]);
-            if (element.metodoSpawProcess.pathAccept && element.metodoSpawProcess.isSpawTrigger) {
-                console.log('Ciao');
-                ritorno.push({
-                    listaPath: element.metodoSpawProcess.pathAccept,
-                    pathScatenante: element.metodoParametri.path
-                });
-            }
-        }
-        return ritorno; */
-        const ritorno: string[] = [];
-        for (let index = 0; index < this.listaMetodi.length; index++) {
-            const element = <ExpressMetodo>(this.listaMetodi[index]);
-            if (element.metodoSpawProcess.pathAccept && element.metodoSpawProcess.isSpawTrigger
-                && element.nomeVariante == MainExpress.triggerPath.pathScatenante) {
-                console.log('Ciao');
-                element.metodoSpawProcess.pathAccept.forEach(element => {
-                    ritorno.push(element);
-                });
-            }
-        }
-        return ritorno;
-    }
 }
 
 export class ListaExpressClasse extends ListaMetadataClasse {
@@ -344,22 +322,34 @@ export class ListaExpressClasse extends ListaMetadataClasse {
             }
         }
     }
-    ConfiguraListaRotteApplicazione(path: string, percorsi: IRaccoltaPercorsi, serverExpressDecorato: any) {
-
-
+    ConfiguraPathRotte(percorsi: IRaccoltaPercorsi) {
         for (let index = 0; index < this.length; index++) {
             const element = <ExpressClasse>this[index];
-            element.SettaPathRoot_e_Global(path, percorsi, serverExpressDecorato);
+            element.SettaPath(percorsi);
+        }
+    }
+    ConfiguraListaRotteApplicazione(serverExpressDecorato: any) {
+        for (let index = 0; index < this.length; index++) {
+            const element = <ExpressClasse>this[index];
+            element.SettaApp(serverExpressDecorato); //, percorsi, serverExpressDecorato);
         }
     }
     EstraiPath() {
         for (let index = 0; index < this.length; index++) {
-            const element = <ExpressClasse>(this[index]);
-            if (element.path == MainExpress.triggerPath.pathScatenante) {
-                const tmp = element.EstraiListaTriggerPath();
-                MainExpress.triggerPath.pathAccept = tmp;
+            const classe = <ExpressClasse>(this[index]);
+            for (let index = 0; index < classe.listaMetodi.length; index++) {
+                const metodo = <ExpressMetodo>classe.listaMetodi[index];
+                if (metodo.metodoSpawProcess.pathAccept /* && metodo.metodoSpawProcess.isSpawTrigger */
+                    && metodo.metodoParametri.percorsi.pathGlobal == MainExpress.triggerPath.pathScatenante) {
+                    console.log('Ciao');
+                    metodo.metodoSpawProcess.pathAccept.forEach(element => {
+                        MainExpress.triggerPath.pathAccept.push(element);
+                    });
+                }
             }
         }
+        console.log('Finito!!!');
+
     }
 }
 /* 

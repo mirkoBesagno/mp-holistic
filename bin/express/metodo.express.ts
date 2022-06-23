@@ -113,7 +113,7 @@ export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
         }
         return percorsoTmp;
     }
-    ConfiguraRottaApplicazione(app: any, percorsi: IRaccoltaPercorsi) {
+    ConfiguraRottaApplicazione(app: any/* , percorsi: IRaccoltaPercorsi */) {
         /* this.metodoParametri.percorsi.patheader = percorsi.patheader;
         this.metodoParametri.percorsi.porta = percorsi.porta;
 
@@ -133,12 +133,12 @@ export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
             percorsoTmp = this.metodoParametri.percorsi.pathGlobal;
         } */
         const middlew: any[] = this.metodoLimitazioni.middleware ?? [];//[];
-        let percorsoTmp = this.ConfiguraPath(percorsi);
+        let percorsoTmp = this.metodoParametri.percorsi.pathGlobal//.path;//this.ConfiguraPath(percorsi);
 
         if (this.metodoAvviabile != undefined) {
             if (MainExpress.isSottoProcesso == true) {
                 if (MainExpress.triggerPath.abilitato == true) {
-                    if (MainExpress.TrovaInTriggerPath(percorsoTmp)) {
+                    if (MainExpress.TrovaInTriggerPath(percorsoTmp) == true) {
                         //qui dovremo controllare se 
                         this.ConfiguraRotteSwitch(app, percorsoTmp, middlew);
                     }
@@ -156,7 +156,7 @@ export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
 
         if (this.metodoVettori.listaHtml) {
             percorsoTmp = '';
-            const pathGlobalTmp = percorsi.pathGlobal;
+            const pathGlobalTmp = this.metodoParametri.percorsi.pathGlobal//percorsi.pathGlobal;
             for (let index = 0; index < this.metodoVettori.listaHtml.length; index++) {
                 const element = this.metodoVettori.listaHtml[index];
                 if (element.percorsoIndipendente) percorsoTmp = '/' + element.path;
@@ -230,7 +230,7 @@ export class ExpressMetodo extends MetadataMetodo implements IExpressMetodo {
             if (this.metodoLimitazioni.helmet == undefined) {
                 this.metodoLimitazioni.helmet = undefined;//helmet();
             }
-            app.get(percorsoTmp,
+            app.get(percorsoTmp, /* this.metodoParametri.path, */
                 this.metodoLimitazioni.cors,
                 this.metodoLimitazioni.helmet,
                 middlew,
@@ -884,12 +884,12 @@ export class ListaExpressMetodo extends ListaMetadataMetodo {
         return item; */
     }
 
-    ConfiguraListaRotteApplicazione(app: any, percorsi: IRaccoltaPercorsi) {
+    ConfiguraListaRotteApplicazione(app: any/* , percorsi: IRaccoltaPercorsi */) {
         for (let index = 0; index < this.length; index++) {
             const element = <ExpressMetodo>this[index];
             if (element.metodoParametri.interazione == 'rotta' || element.metodoParametri.interazione == 'ambo') {
                 //element.ConfiguraRotta(this.rotte, this.percorsi);
-                element.ConfiguraRottaApplicazione(app, percorsi);
+                element.ConfiguraRottaApplicazione(app/* , percorsi */);
             }
             //element.listaRotteGeneraChiavi=this.listaMetodiGeneraKey;
         }

@@ -109,8 +109,10 @@ export class MainExpress {
             (this.serverExpressDecorato).use(express.json());
             (this.serverExpressDecorato).use(cookieParser());
             //tmp.ConfiguraListaRotte(this.percorsi);
+            tmp.ConfiguraPathRotte(this.percorsi);
             tmp.EstraiPath();
-            tmp.ConfiguraListaRotteApplicazione(this.path, this.percorsi, this.serverExpressDecorato);
+            tmp.ConfiguraListaRotteApplicazione(this.serverExpressDecorato);
+            
 
             this.httpServer = http.createServer(this.serverExpressDecorato);
 
