@@ -4,6 +4,7 @@
 
 
 import { ExpressClasse, IExpressClasse, ListaExpressClasse } from "../express/classe.express";
+import { ExpressMetodo } from "../express/metodo.express";
 import { IHtml } from "../express/metodo/utility";
 import { IParametriEstratti } from "../express/utility/utility";
 import { GetListaClasseMeta, SalvaListaMetaClasse } from "../metadata";
@@ -124,6 +125,15 @@ export function DecoratoreClasse(ctr: any, item?: TypeDecoratoreClasse) {
                     const listExpress: ListaExpressClasse = GetListaClasseMeta<ListaExpressClasse>('nomeMetadataKeyTargetFor_Express', () => { return new ListaExpressClasse(); });
                     item.itemExpressClasse.nomeOriginale = ctr.name;
                     const t = new ExpressClasse(item.itemExpressClasse);
+                    if (item.itemExpressClasse.listaMiddleware) {
+                        for (let index = 0; index < item.itemExpressClasse.listaMiddleware.length; index++) {
+                            const middlew = item.itemExpressClasse.listaMiddleware[index];
+                            for (let index = 0; index < t.listaMetodi.length; index++) {
+                                const element = <ExpressMetodo>t.listaMetodi[index];
+                                element.metodoLimitazioni.middleware.push(middlew);
+                            }
+                        }
+                    }
                     listExpress.CercaSeNoAggiungi(t);
                     SalvaListaMetaClasse('nomeMetadataKeyTargetFor_Express', listExpress);
                 }

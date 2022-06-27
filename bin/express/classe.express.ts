@@ -18,6 +18,7 @@ export interface IExpressClasse extends IMetaClasse {
     html?: IHtml[];
     LogGenerale?: any;
     cacheOptionMemory?: { durationSecondi: number };
+    listaMiddleware?: any[];
     Istanziatore?: (parametri: IParametriEstratti, listaParametri: ListaMetadataParametro) => Promise<any> | any;
 }
 
@@ -35,6 +36,7 @@ export class ExpressClasse extends MetadataClasse implements IExpressClasse {
 
     LogGenerale?: any;
     cacheOptionMemory?: { durationSecondi: number };
+    listaMiddleware = [];
     Istanziatore?: (parametri: IParametriEstratti, listaParametri: ListaMetadataParametro) => Promise<any> | any;
 
     GetThis() { return this; }
@@ -296,7 +298,6 @@ export class ListaExpressClasse extends ListaMetadataClasse {
         }
         return undefined; */
     }
-
     AggiungiElemento(item: ExpressClasse) {
         const t = super.AggiungiElemento(item);
         return <ExpressClasse>t;
@@ -311,7 +312,6 @@ export class ListaExpressClasse extends ListaMetadataClasse {
         this.push(item);
         return item; */
     }
-
     ConfiguraListaRotte(percorsi: IRaccoltaPercorsi) {
 
         for (let index = 0; index < this.length; index++) {
