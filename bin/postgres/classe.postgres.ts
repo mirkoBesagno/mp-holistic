@@ -21,7 +21,8 @@ export interface IPostgresClasse extends IMetaClasse {
     creaId?: boolean,
     listaPolicy?: ListaPolicy,
     grants?: IGrant[],
-    multiUnique?: { colonneDiRiferimento: string[] }[]
+    multiUnique?: { colonneDiRiferimento: string[] }[],
+    activeTrackingChange?: {}
 }
 
 export class PostgresClasse extends MetadataClasse implements IPostgresClasse {
@@ -222,6 +223,9 @@ export class PostgresClasse extends MetadataClasse implements IPostgresClasse {
 
         if (item.grants) this.grants = item.grants;
     }
+    CostruisciTabelleDiControllo() {
+
+    }
 }
 
 
@@ -337,6 +341,14 @@ export function TriggerUpdate_updated_at_column() {
         RETURN NEW;
     END;
     $$ language 'plpgsql';`;
+}
+export function TringgerDiControllo(nomeTabella: string) {
+    return `DROP TRIGGER IF EXISTS tr_somethings_updated_at ON "${nomeTabella}";
+    CREATE TRIGGER tr_somethings_updated_at
+    BEFORE UPDATE
+    ON "${nomeTabella}"
+    FOR EACH ROW
+    EXECUTE PROCEDURE update_updated_at_column();`;
 }
 export function CreateDataBase(nomeDB: string) {
     return `CREATE DATABASE ${nomeDB};`;

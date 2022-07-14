@@ -88,6 +88,9 @@ export class MainPostgres {
                 this.elencoQuery.push(DropAllTable());
             }
             this.elencoQuery.push(TriggerUpdate_updated_at_column());
+            //
+           // this.elencoQuery.push();
+            //
             this.InizializzaRuoli(this.elencoQuery, item.listaRuoli ?? []);
             this.InizializzaUser(this.elencoQuery, item.listaUser ?? []);
             /*  */
