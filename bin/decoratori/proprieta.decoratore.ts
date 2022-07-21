@@ -37,6 +37,7 @@ export function DecoratoreProprieta(nomeClasse: string, nomeProprieta: string, i
                     { 
                         nomeOriginale: nomeClasse, 
                         creaId: true, 
+                        tracciamento:false,
                         abilitaUpdatedAt: true, 
                         abilitaDeletedAt: true, 
                         abilitaCreatedAt: true, 

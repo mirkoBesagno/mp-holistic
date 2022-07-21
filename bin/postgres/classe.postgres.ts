@@ -19,6 +19,7 @@ export interface IPostgresClasse extends IMetaClasse {
     abilitaUpdatedAt?: boolean,
     abilitaDeletedAt?: boolean,
     creaId?: boolean,
+    tracciamento?: boolean,
     listaPolicy?: ListaPolicy,
     grants?: IGrant[],
     multiUnique?: { colonneDiRiferimento: string[] }[],
@@ -36,6 +37,7 @@ export class PostgresClasse extends MetadataClasse implements IPostgresClasse {
     abilitaUpdatedAt: boolean;
     abilitaDeletedAt: boolean;
     creaId: boolean;
+    tracciamento: boolean;
     listaPolicy?: ListaPolicy;
     grants?: IGrant[]
     multiUnique?: { colonneDiRiferimento: string[] }[] = [];
@@ -51,6 +53,7 @@ export class PostgresClasse extends MetadataClasse implements IPostgresClasse {
             item.nomeTabella)
             this.nomeOriginale = item.nomeTabella;
         this.creaId = item.creaId ?? true;
+        this.tracciamento = item.tracciamento ?? false;
         this.nomeTabella = item.nomeTabella ?? this.nomeOriginale;
         //this.listaProprieta = new Lista();
         this.abilitaCreatedAt = item.abilitaCreatedAt ?? true;
@@ -61,6 +64,65 @@ export class PostgresClasse extends MetadataClasse implements IPostgresClasse {
         }
     }
     CostruisciCreazioneDB(/* client: Client */elencoQuery: string[], padreEreditario: boolean) {
+
+        /* creo la tabella di controllo */
+        if (this.tracciamento) {
+            elencoQuery.push(`
+            CREATE TABLE public."${this.nomeTabella}_history" (
+                id serial,
+                tstamp timestamp DEFAULT now(),
+                schemaname text,
+                tabname text,
+                operation text,
+                who text DEFAULT current_user,
+                new_val json,
+                old_val json
+         
+        );`);
+            elencoQuery.push(`CREATE FUNCTION "TR_tracciamento_${this.nomeTabella}"() RETURNS trigger AS $$
+ 
+        BEGIN
+ 
+                IF      TG_OP = 'INSERT'
+ 
+                THEN
+ 
+                        INSERT INTO logging.t_history (tabname, schemaname, operation, new_val)
+ 
+                                VALUES (TG_RELNAME, TG_TABLE_SCHEMA, TG_OP, row_to_json(NEW));
+ 
+                        RETURN NEW;
+ 
+                ELSIF   TG_OP = 'UPDATE'
+ 
+                THEN
+ 
+                        INSERT INTO logging.t_history (tabname, schemaname, operation, new_val, old_val)
+ 
+                                VALUES (TG_RELNAME, TG_TABLE_SCHEMA, TG_OP,
+ 
+                                        row_to_json(NEW), row_to_json(OLD));
+ 
+                        RETURN NEW;
+ 
+                ELSIF   TG_OP = 'DELETE'
+ 
+                THEN
+ 
+                        INSERT INTO logging.t_history (tabname, schemaname, operation, old_val)
+ 
+                                VALUES (TG_RELNAME, TG_TABLE_SCHEMA, TG_OP, row_to_json(OLD));
+ 
+                        RETURN OLD;
+ 
+                END IF;
+ 
+        END;
+ 
+$$ LANGUAGE 'plpgsql' SECURITY DEFINER;`);
+        }
+
+        /* creo la vera tabella */
         let rigaDaInserire = '';
         let ritornoTmp = '';
         if (this.estende == undefined && this.like == undefined && padreEreditario == true) rigaDaInserire = '); \n';
@@ -118,6 +180,7 @@ export class PostgresClasse extends MetadataClasse implements IPostgresClasse {
                         }
                     }
                 }
+
                 ritornoTmp = ritornoTmp + rigaDaInserire;
             }
             else {
@@ -149,6 +212,12 @@ export class PostgresClasse extends MetadataClasse implements IPostgresClasse {
             }
             if (this.abilitaDeletedAt && this.abilitaUpdatedAt && this.queryPerVista == undefined) {
                 elencoQuery.push(TriggerDeleted_at(this.nomeTabella));
+            }
+
+            if (this.tracciamento) {
+                elencoQuery.push(`CREATE TRIGGER t BEFORE INSERT OR UPDATE OR DELETE ON public."${this.nomeTabella}"
+ 
+            FOR EACH ROW EXECUTE PROCEDURE "TR_tracciamento_${this.nomeTabella}"();`);
             }
         }
         return ritornoTmp;
@@ -215,6 +284,7 @@ export class PostgresClasse extends MetadataClasse implements IPostgresClasse {
         super.Mergia(item);
 
         this.creaId = item.creaId;
+        this.tracciamento = item.tracciamento;
         this.nomeTabella = item.nomeTabella;
         //this.listaProprieta = new Lista();
         this.abilitaCreatedAt = item.abilitaCreatedAt;
@@ -271,6 +341,14 @@ export function TriggerUpdate(nomeTabella: string) {
         ON "${nomeTabella}"
         FOR EACH ROW
         EXECUTE PROCEDURE update_updated_at_column();`
+}
+export function TriggerUserAction(nomeTabella: string) {
+    return `DROP TRIGGER IF EXISTS tr_update_user_action ON "${nomeTabella}";
+        CREATE TRIGGER tr_update_user_action
+        BEFORE INSERT OR UPDATE 
+        ON "${nomeTabella}"
+        FOR EACH ROW
+        EXECUTE PROCEDURE update_user_action();`
 }
 export function CostruisciFunzione(item: any, nomeFunzioneCheck: string, nomePolicy: string, typeFunctionCheck: string,
     carattere: string | 'CK' | 'US', /* client: Client */elencoQuery: string[]): string {
@@ -341,6 +419,49 @@ export function TriggerUpdate_updated_at_column() {
         RETURN NEW;
     END;
     $$ language 'plpgsql';`;
+}
+export function TriggerUpdateUserAction() {
+    return `CREATE FUNCTION change_trigger() RETURNS trigger AS $$
+ 
+    BEGIN
+
+            IF      TG_OP = 'INSERT'
+
+            THEN
+
+                    INSERT INTO logging.t_history (tabname, schemaname, operation, new_val)
+
+                            VALUES (TG_RELNAME, TG_TABLE_SCHEMA, TG_OP, row_to_json(NEW));
+
+                    RETURN NEW;
+
+            ELSIF   TG_OP = 'UPDATE'
+
+            THEN
+
+                    INSERT INTO logging.t_history (tabname, schemaname, operation, new_val, old_val)
+
+                            VALUES (TG_RELNAME, TG_TABLE_SCHEMA, TG_OP,
+
+                                    row_to_json(NEW), row_to_json(OLD));
+
+                    RETURN NEW;
+
+            ELSIF   TG_OP = 'DELETE'
+
+            THEN
+
+                    INSERT INTO logging.t_history (tabname, schemaname, operation, old_val)
+
+                            VALUES (TG_RELNAME, TG_TABLE_SCHEMA, TG_OP, row_to_json(OLD));
+
+                    RETURN OLD;
+
+            END IF;
+
+    END;
+
+$$ LANGUAGE 'plpgsql' SECURITY DEFINER;`;
 }
 export function TringgerDiControllo(nomeTabella: string) {
     return `DROP TRIGGER IF EXISTS tr_somethings_updated_at ON "${nomeTabella}";
